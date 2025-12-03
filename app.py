@@ -14,12 +14,16 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- CSS PERSONNALISÉ (Pour un look un peu plus "Finance") ---
+# --- CSS PERSONNALISÉ ---
 st.markdown("""
 <style>
     .main-header {font-size: 2.5rem; color: #0E1117; font-weight: 700;}
     .sub-header {font-size: 1.5rem; color: #4F8BF9; font-weight: 600;}
     .highlight {background-color: #f0f2f6; padding: 10px; border-radius: 5px; border-left: 5px solid #4F8BF9;}
+    
+    section[data-testid="stSidebar"] {
+        width: 350px !important; /* On force la largeur à 350px */
+    }
 </style>
 """, unsafe_allow_html=True)
 
