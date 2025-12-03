@@ -158,7 +158,7 @@ with tab_skills:
     st.markdown("### Langues & Certifications")
     c1, c2, c3 = st.columns(3)
     c1.metric("Anglais", "Courant (C1)", "Cambridge: 186")
-    c2.metric("Excel", "Expert", "TOSA: 868/1000")
+    c2.metric("Excel", "Avancé", "TOSA: 868/1000")
     c3.metric("Allemand", "Professionnel", "Notions")
 
 # --- TAB 3 : LABO TECHNIQUE (Le code interactif) ---
