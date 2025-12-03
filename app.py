@@ -162,7 +162,7 @@ with tab_skills:
     c2.metric("Excel", "Avancé", "TOSA: 868/1000")
     c3.metric("Allemand", "Professionnel", "Notions")
 
-# --- TAB 3 : LABO TECHNIQUE (Le code interactif) ---
+# --- TAB 3 : PRICER OPTION  ---
 with tab_tech:
     st.markdown("## ⚡ Pricing d'Option & Structuration")
     st.markdown("""
@@ -205,7 +205,7 @@ with tab_tech:
         st.divider()
         
         # Heatmap
-        st.markdown("** Analyse de Scénarios : Impact Prix (Spot vs Volatilité)**")
+        st.markdown(" Analyse de Scénarios : Impact Prix (Spot vs Volatilité)")
         
         # Génération de la matrice pour la Heatmap
         s_range = np.linspace(current_price * 0.85, current_price * 1.15, 10)
