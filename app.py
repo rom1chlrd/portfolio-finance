@@ -94,7 +94,7 @@ st.markdown(f'<div class="main-header">Portfolio Technique & Financier</div>', u
 st.markdown(f"**{CONTACT_INFO['tagline']}**")
 
 # Onglets de navigation
-tab_about, tab_skills, tab_tech = st.tabs(["👤 À Propos & Ambitions", "💼 Compétences & Expériences", "💻 Labo Structuration (Code)"])
+tab_about, tab_skills, tab_tech = st.tabs(["👤 À Propos & Ambitions", "💼 Compétences & Expériences", "💻 Labo Structuration (Code)", "🎲 Monte Carlo", "🌍 Extra & Perso"])
 
 # --- TAB 1 : À PROPOS & AMBITIONS ---
 with tab_about:
@@ -218,3 +218,110 @@ with tab_tech:
         ax.set_ylabel("Volatilité (%)")
         ax.invert_yaxis()
         st.pyplot(fig)
+
+# --- TAB 4 : SIMULATION MONTE CARLO ---
+with tab_mc:
+    st.markdown("## 🎲 Simulation Monte-Carlo (Mouvement Brownien)")
+    st.markdown("""
+    Pour structurer des produits exotiques (ex: Options Asiatiques ou Barrières), les formules fermées ne suffisent plus.
+    J'utilise ici `NumPy` pour simuler des milliers de trajectoires possibles du prix de l'actif.
+    """)
+    
+    col_sim_settings, col_sim_graph = st.columns([1, 3])
+    
+    with col_sim_settings:
+        st.markdown('<div class="highlight">Paramètres Simulation</div>', unsafe_allow_html=True)
+        n_sims = st.slider("Nombre de scénarios", 10, 1000, 100)
+        time_steps = st.slider("Pas de temps (Jours)", 10, 252, 100)
+        
+        # On reprend les variables globales définies dans l'onglet précédent pour la cohérence
+        # Mais on laisse l'utilisateur les ajuster s'il veut tester autre chose ici
+        mc_spot = st.number_input("Spot Initial", value=100.0)
+        mc_vol = st.slider("Volatilité MC (%)", 5.0, 100.0, 20.0) / 100
+        mc_r = st.number_input("Taux sans risque MC (%)", value=1.5) / 100
+        mc_T = st.number_input("Horizon (Années)", value=1.0)
+        
+    with col_sim_graph:
+        # LOGIQUE DE CALCULE MONTE CARLO
+        # 1. Préparation des variables
+        dt = mc_T / time_steps
+        S = np.zeros((time_steps + 1, n_sims))
+        S[0] = mc_spot
+        
+        # 2. Génération des chocs aléatoires (Mouvement Brownien)
+        # On utilise numpy vectorisé pour la rapidité (pas de boucle for lente)
+        Z = np.random.standard_normal((time_steps, n_sims))
+        
+        # 3. Formule : S(t+1) = S(t) * exp( (r - 0.5*sigma^2)*dt + sigma*sqrt(dt)*Z )
+        drift = (mc_r - 0.5 * mc_vol ** 2) * dt
+        diffusion = mc_vol * np.sqrt(dt) * Z
+        
+        # On calcule les rendements cumulés
+        returns = np.exp(drift + diffusion)
+        
+        # On applique au spot initial (cumprod = produit cumulé)
+        S[1:] = mc_spot * np.cumprod(returns, axis=0)
+        
+        # VISUALISATION
+        fig_mc, ax_mc = plt.subplots(figsize=(10, 5))
+        ax_mc.plot(S[:, :100], alpha=0.4, linewidth=1) # On affiche max 100 lignes pour pas surcharger
+        ax_mc.set_title(f"Projection de {n_sims} scénarios sur {mc_T} an(s)")
+        ax_mc.set_xlabel("Jours de trading")
+        ax_mc.set_ylabel("Prix de l'actif")
+        ax_mc.grid(True, alpha=0.3)
+        
+        # Afficher la moyenne (Espérance)
+        mean_path = np.mean(S, axis=1)
+        ax_mc.plot(mean_path, color='black', linewidth=2, linestyle='--', label="Moyenne")
+        ax_mc.legend()
+        
+        st.pyplot(fig_mc)
+        
+        # KPI Finale
+        final_mean = mean_path[-1]
+        st.metric("Prix moyen à maturité", f"{final_mean:.2f} €", delta=f"{((final_mean/mc_spot)-1)*100:.2f}% vs Spot")
+
+# --- TAB 5 : EXTRA & PERSO ---
+with tab_extra:
+    st.markdown("## 🌍 Profil International & Leadership")
+    st.write("Mon parcours est marqué par une forte mobilité internationale et des responsabilités associatives.")
+
+    col_map, col_lifestyle = st.columns([2, 1])
+
+    with col_map:
+        st.markdown("### ✈️ Carte de mes expériences")
+        st.markdown("De la Floride à la Nouvelle-Zélande, en passant par Lille.")
+        
+        # Coordonnées précises : Lille, Te Puke (NZ), Gainesville (UF), Miami (High School)
+        map_data = pd.DataFrame({
+            'lat': [50.629, -37.783, 29.651, 25.761],
+            'lon': [3.057, 176.316, -82.324, -80.191],
+            'Lieu': ['Lille (Junia HEI)', 'Te Puke (Kiwi Harvest)', 'Gainesville (UF Exchange)', 'Miami (High School Diploma)']
+        })
+        
+        # Affichage de la carte
+        st.map(map_data, zoom=1)
+        
+        st.caption("""
+        📍 **Lille** : Cycle Ingénieur (Actuel)
+        📍 **Miami** : Dual Diploma High School (2019-2022)
+        📍 **Gainesville (Floride)** : Semestre d'échange à l'University of Florida (Jan 2026)
+        📍 **Te Puke (NZ)** : Ouvrier agricole saisonnier (2025)
+        """)
+
+    with col_lifestyle:
+        st.markdown("### 🍷 Leadership")
+        st.info("**Président du Club d'Oenologie**")
+        st.markdown("""
+        Une expérience entrepreneuriale concrète :
+        * **Budget :** Gestion de 6 000 €.
+        * **Négociation :** Partenariats avec 8 domaines.
+        * **Management :** Équipe de 20 étudiants.
+        """)
+        
+        st.divider()
+        
+        st.markdown("### 🎿 Compétition")
+        st.write("""
+        **Ski de Compétition :** Cette discipline m'a appris la résilience et la prise de risque calculée, des qualités que je transpose aujourd'hui dans la finance de marché.
+        """)
