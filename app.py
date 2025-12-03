@@ -164,7 +164,7 @@ with tab_skills:
 
 # --- TAB 3 : PRICER OPTION  ---
 with tab_tech:
-    st.markdown("## ⚡ Pricing d'Option & Structuration")
+    st.markdown("## Pricing d'Option & Structuration")
     st.markdown("""
     En tant que candidat en structuration, je code mes propres outils pour comprendre la mécanique des produits.
     Ci-dessous, mon implémentation du modèle **Black-Scholes** en Python.
@@ -227,7 +227,7 @@ with tab_tech:
 
 # --- TAB 4 : SIMULATION MONTE CARLO ---
 with tab_mc:
-    st.markdown("## 🎲 Simulation Monte-Carlo (Mouvement Brownien)")
+    st.markdown("## Simulation Monte-Carlo (Mouvement Brownien)")
     st.markdown("""
     Pour structurer des produits exotiques (ex: Options Asiatiques ou Barrières), les formules fermées ne suffisent plus.
     J'utilise ici `NumPy` pour simuler des milliers de trajectoires possibles du prix de l'actif.
