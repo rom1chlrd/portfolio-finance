@@ -29,8 +29,8 @@ CONTACT_INFO = {
     "phone": "+33 7 81 78 79 71",
     "email": "romain.chalard@student.junia.com",
     "location": "Paris, France",
-    "linkedin": "https://linkedin.com/in/votre-profil", # À modifier
-    "github": "https://github.com/votre-pseudo"        # À modifier
+    "linkedin": "https://linkedin.com/in/r-chalard", # À modifier
+    "github": "https://github.com/rom1chlrd"        # À modifier
 }
 
 # --- FONCTIONS UTILITAIRES (Black-Scholes) ---
@@ -152,9 +152,9 @@ with tab_skills:
 
     st.markdown("### 🌍 Langues & Certifications")
     c1, c2, c3 = st.columns(3)
-    [cite_start]c1.metric("Anglais", "Courant (C1)", "Cambridge: 186") # [cite: 66]
-    [cite_start]c2.metric("Excel", "Expert", "TOSA: 868") # [cite: 67]
-    [cite_start]c3.metric("Allemand", "Professionnel", "Notions") # [cite: 9]
+    c1.metric("Anglais", "Courant (C1)", "Cambridge: 186")
+    c2.metric("Excel", "Expert", "TOSA: 868/1000")
+    c3.metric("Allemand", "Professionnel", "Notions")
 
 # --- TAB 3 : LABO TECHNIQUE (Le code interactif) ---
 with tab_tech:
