@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import norm
 from datetime import date
+import pydeck as pdk
 
 # --- CONFIGURATION GÉNÉRALE ---
 st.set_page_config(
@@ -101,7 +102,7 @@ with tab_about:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown("### 🎯 Mon Objectif : La Structuration")
+        st.markdown("### Mon Objectif : La Structuration")
         st.info("""
         **Recherche de stage (6 mois) à partir de Juin 2026**
         
@@ -111,7 +112,7 @@ with tab_about:
         Je rejoindrai l'**University of Florida** en Janvier 2026 pour me spécialiser en Finance de Marché.
         """)
         
-        st.markdown("### 📈 Intérêt Personnel pour les Marchés")
+        st.markdown("### Intérêt Personnel pour les Marchés")
         st.write("""
         Au-delà de ma formation académique, je suis un investisseur particulier actif. Cette pratique quotidienne me permet de :
         * **Confronter la théorie à la réalité :** J'applique l'analyse fondamentale (ratios, bilans) et technique pour gérer mon propre portefeuille.
@@ -120,7 +121,7 @@ with tab_about:
         """)
 
     with col2:
-        st.markdown("### 🎓 Formation Clé")
+        st.markdown("### Formation Clé")
         st.markdown("""
         **2026 (Jan-Mai)** 🇺🇸 **University of Florida** *Finance de Marché & Supply Chain*
         
@@ -131,7 +132,7 @@ with tab_about:
 
 # --- TAB 2 : COMPÉTENCES & EXPÉRIENCES ---
 with tab_skills:
-    st.markdown("### 🛠 Compétences démontrées par l'expérience")
+    st.markdown("### Compétences démontrées par l'expérience")
     st.markdown("Je ne liste pas simplement des mots-clés, je les applique concrètement.")
     
     # [cite_start]On utilise les données extraites du CV [cite: 22, 28, 19, 13]
@@ -150,7 +151,7 @@ with tab_skills:
             st.write(skill['Réalisation'])
             st.divider()
 
-    st.markdown("### 🌍 Langues & Certifications")
+    st.markdown("### Langues & Certifications")
     c1, c2, c3 = st.columns(3)
     c1.metric("Anglais", "Courant (C1)", "Cambridge: 186")
     c2.metric("Excel", "Expert", "TOSA: 868/1000")
@@ -199,7 +200,7 @@ with tab_tech:
         st.divider()
         
         # Heatmap
-        st.markdown("**🔥 Analyse de Scénarios : Impact Prix (Spot vs Volatilité)**")
+        st.markdown("** Analyse de Scénarios : Impact Prix (Spot vs Volatilité)**")
         
         # Génération de la matrice pour la Heatmap
         s_range = np.linspace(current_price * 0.85, current_price * 1.15, 10)
@@ -281,6 +282,7 @@ with tab_mc:
         final_mean = mean_path[-1]
         st.metric("Prix moyen à maturité", f"{final_mean:.2f} €", delta=f"{((final_mean/mc_spot)-1)*100:.2f}% vs Spot")
 
+
 # --- TAB 5 : EXTRA & PERSO ---
 with tab_extra:
     st.markdown("## 🌍 Profil International & Leadership")
@@ -289,18 +291,41 @@ with tab_extra:
     col_map, col_lifestyle = st.columns([2, 1])
 
     with col_map:
-        st.markdown("### ✈️ Carte de mes expériences")
-        st.markdown("De la Floride à la Nouvelle-Zélande, en passant par Lille.")
+        st.markdown("### Carte de mes expériences")
         
-        # Coordonnées précises : Lille, Te Puke (NZ), Gainesville (UF), Miami (High School)
+        # 1. Vos données (Mêmes coordonnées qu'avant)
         map_data = pd.DataFrame({
             'lat': [50.629, -37.783, 29.651, 25.761],
             'lon': [3.057, 176.316, -82.324, -80.191],
             'Lieu': ['Lille (Junia HEI)', 'Te Puke (Kiwi Harvest)', 'Gainesville (UF Exchange)', 'Miami (High School Diploma)']
         })
-        
-        # Affichage de la carte
-        st.map(map_data, zoom=1)
+
+        # 2. Configuration de la carte "Custom"
+        # On crée une couche de points (Scatterplot)
+        layer = pdk.Layer(
+            "ScatterplotLayer",
+            map_data,
+            get_position='[lon, lat]',
+            get_color=[255, 75, 75, 200],  # Couleur Rouge [R, G, B, Transparence]
+            get_radius=300000,             # Rayon des points en mètres (300km pour être gros sur la carte monde)
+            pickable=True                  # Permet d'afficher le texte au survol
+        )
+
+        # 3. Vue initiale (Zoom dézoomé pour voir le monde)
+        view_state = pdk.ViewState(
+            latitude=10,
+            longitude=0,
+            zoom=0.8,
+            pitch=0,
+        )
+
+        # 4. Affichage de la carte avec une infobulle (Tooltip)
+        st.pydeck_chart(pdk.Deck(
+            map_style=None,
+            initial_view_state=view_state,
+            layers=[layer],
+            tooltip={"text": "{Lieu}"} # Affiche le nom quand on passe la souris dessus !
+        ))
         
         st.caption("""
         📍 **Lille** : Cycle Ingénieur (Actuel)
@@ -310,7 +335,7 @@ with tab_extra:
         """)
 
     with col_lifestyle:
-        st.markdown("### 🍷 Leadership")
+        st.markdown("### Leadership")
         st.info("**Président du Club d'Oenologie**")
         st.markdown("""
         Une expérience entrepreneuriale concrète :
@@ -321,7 +346,7 @@ with tab_extra:
         
         st.divider()
         
-        st.markdown("### 🎿 Compétition")
+        st.markdown("### Compétition")
         st.write("""
         **Ski de Compétition :** Cette discipline m'a appris la résilience et la prise de risque calculée, des qualités que je transpose aujourd'hui dans la finance de marché.
         """)
