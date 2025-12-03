@@ -6,6 +6,7 @@ import seaborn as sns
 from scipy.stats import norm
 from datetime import date
 import pydeck as pdk
+import yfinance as yf
 
 # --- CONFIGURATION GÉNÉRALE ---
 st.set_page_config(
@@ -99,7 +100,7 @@ st.markdown(f'<div class="main-header">Portfolio Technique & Financier</div>', u
 st.markdown(f"**{CONTACT_INFO['tagline']}**")
 
 # Onglets de navigation
-tab_about, tab_skills, tab_tech, tab_mc, tab_extra = st.tabs(["👤 À Propos", "💼 Compétences", "💻 Pricer Options", "🎲 Monte Carlo", "🌍 Extra & Perso"])
+tab_about, tab_skills, tab_tech, tab_mc, tab_market, tab_extra = st.tabs(["👤 À Propos", "💼 Compétences", "💻 Pricer Options", "🎲 Monte Carlo", "📊 Market Data", "🌍 Extra & Perso"])
 
 # --- TAB 1 : À PROPOS & AMBITIONS ---
 with tab_about:
@@ -286,6 +287,55 @@ with tab_mc:
         final_mean = mean_path[-1]
         st.metric("Prix moyen à maturité", f"{final_mean:.2f} €", delta=f"{((final_mean/mc_spot)-1)*100:.2f}% vs Spot")
 
+# --- TAB 6 : MARKET DATA & CORRELATION ---
+with tab_market:
+    st.markdown("## Analyse de Marché (Données Réelles)")
+    st.markdown("""
+    En structuration, on travaille souvent sur des paniers d'actifs (Basket Options). 
+    Comprendre la corrélation entre les sous-jacents est crucial pour pricer le risque.
+    
+    *Les données ci-dessous sont récupérées en temps réel via l'API Yahoo Finance.*
+    """)
+    
+    col_sel, col_viz = st.columns([1, 3])
+    
+    with col_sel:
+        st.markdown('<div class="highlight">Sélection du Panier</div>', unsafe_allow_html=True)
+        # Liste de tickers par défaut (CAC40 & Tech US)
+        default_tickers = ['AC.PA', 'MC.PA', 'TEP.PA', 'AAPL', 'MSFT', 'NVDA']
+        tickers = st.multiselect("Choix des Actions", default_tickers, default=default_tickers[:4])
+        period = st.selectbox("Période d'analyse", ["1mo", "3mo", "6mo", "1y", "5y"], index=3)
+        
+    with col_viz:
+        if len(tickers) > 1:
+            try:
+                # Téléchargement des données
+                data = yf.download(tickers, period=period)['Close']
+                
+                # Calcul des rendements quotidiens (Log returns)
+                returns = np.log(data / data.shift(1)).dropna()
+                
+                # Calcul de la corrélation
+                corr_matrix = returns.corr()
+                
+                # Affichage 1 : La Heatmap
+                st.subheader("🔥 Matrice de Corrélation")
+                fig_corr, ax_corr = plt.subplots(figsize=(8, 6))
+                sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, center=0, ax=ax_corr)
+                st.pyplot(fig_corr)
+                
+                st.divider()
+                
+                # Affichage 2 : Performance comparée
+                st.subheader("📈 Performance Relative (Base 100)")
+                # Normalisation base 100 pour comparer
+                normalized_data = (data / data.iloc[0]) * 100
+                st.line_chart(normalized_data)
+                
+            except Exception as e:
+                st.error(f"Erreur lors de la récupération des données. Vérifiez les tickers. ({e})")
+        else:
+            st.warning("Veuillez sélectionner au moins 2 actifs pour afficher la corrélation.")
 
 # --- TAB 5 : EXTRA & PERSO ---
 with tab_extra:
