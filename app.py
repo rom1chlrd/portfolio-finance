@@ -31,7 +31,7 @@ st.markdown("""
 # --- DONNÉES DU CV (Hardcodées pour la simplicité) ---
 CONTACT_INFO = {
     "name": "Romain Chalard",
-    "tagline": "Étudiant en Ingénierie Financière | Futur Analyste Structuration",
+    "tagline": "Étudiant en Ingénierie Financière | Recherche Stage 6 mois - Sales & Structuration",
     "phone": "+33 7 81 78 79 71",
     "email": "romain.chalard@student.junia.com",
     "location": "Paris, France",
