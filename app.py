@@ -96,7 +96,7 @@ with st.sidebar:
 # --- CONTENU PRINCIPAL ---
 
 # Titre Principal
-st.markdown(f'<div class="main-header">Portfolio Technique & Financier</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="main-header">Portfolio Technique & Financier | Romain CHALARD</div>', unsafe_allow_html=True)
 st.markdown(f"**{CONTACT_INFO['tagline']}**")
 
 # Onglets de navigation
