@@ -337,73 +337,138 @@ with tab_market:
         else:
             st.warning("Veuillez sélectionner au moins 2 actifs pour afficher la corrélation.")
 
-# --- TAB SALES : GÉNÉRATEUR DE PITCH ---
+# --- TAB SALES : COCKPIT COMMERCIAL AVANCÉ ---
 with tab_sales:
-    st.markdown("## Assistant Sales : Générateur de Trade Ideas")
+    st.markdown("## Cockpit Sales & Structuration")
     st.markdown("""
-    Le rôle d'un Sales est de transformer une vue de marché en une solution d'investissement concrète.
-    Cet outil simule la proposition d'un produit structuré adapté au profil du client.
+    Ici, je simule l'approche d'un Sales CIB : **Comprendre le besoin client - Structurer une solution - Pricer - Pitcher.**
     """)
     
-    col_client, col_pitch = st.columns([1, 2])
+    # Division en 2 colonnes : Paramètres Client (Gauche) / Solution & Visuel (Droite)
+    col_input, col_output = st.columns([1, 2])
     
-    with col_client:
-        st.markdown('<div class="highlight">Profil du Client</div>', unsafe_allow_html=True)
-        client_view = st.selectbox("Anticipation de Marché", ["Haussier (Bullish)", "Neutre / Modérément Haussier", "Baissier (Bearish)"])
-        risk_profile = st.radio("Appétit au Risque", ["Prudent (Protection Capital)", "Yield (Recherche de rendement)"])
-        underlying = st.selectbox("Sous-jacent cible", ["Euro Stoxx 50", "S&P 500", "LVMH", "TotalEnergies", "Tesla"])
+    with col_input:
+        st.markdown('<div class="highlight">1. Paramètres du Produit</div>', unsafe_allow_html=True)
         
-        # Logique simple de recommandation (Moteur de recommandation)
-        product_name = ""
-        strategy_desc = ""
+        # Choix de base
+        underlying = st.selectbox("Sous-jacent", ["Euro Stoxx 50", "S&P 500", "LVMH", "TotalEnergies", "Nvidia"])
+        product_type = st.selectbox("Structure", ["Phoenix Mémoire (Yield)", "Autocall Athena (Early Redemp.)", "Capital Garanti (Call Spread)"])
         
-        if client_view == "Haussier (Bullish)":
-            if risk_profile == "Prudent":
-                product_name = "Call Spread (Capital Garanti)"
-                strategy_desc = "Participation à la hausse tout en protégeant 100% du capital à maturité."
-            else:
-                product_name = "Bonus Cap / Outperformance"
-                strategy_desc = "Levier sur la performance à la hausse avec une barrière de protection partielle."
-                
-        elif client_view == "Neutre / Modérément Haussier":
-            if risk_profile == "Prudent":
-                product_name = "Autocall 'Athena' (Recall bas)"
-                strategy_desc = "Objectif de remboursement anticipé rapide même si le marché stagne."
-            else:
-                product_name = "Phoenix Mémoire (Classic Yield)"
-                strategy_desc = "Distribution de coupons mensuels tant que le marché ne s'effondre pas (Barrière -40%). Le Best-Seller."
-                
-        else: # Baissier
-            product_name = "Put Spread"
-            strategy_desc = "Outil de couverture (Hedging) pour profiter de la baisse et protéger le portefeuille."
+        st.markdown("---")
+        st.markdown("**Paramètres de Structuration**")
+        
+        # Paramètres dynamiques selon le produit
+        maturity = st.slider("Maturité (Années)", 1, 10, 5)
+        
+        if "Phoenix" in product_type or "Autocall" in product_type:
+            barrier_protection = st.slider("Barrière de Protection (Capital)", 40, 80, 60, help="Niveau en % du prix initial en dessous duquel le capital est à risque")
+            barrier_coupon = st.slider("Barrière de Coupon", 50, 100, 70, help="Niveau pour toucher le coupon")
+            autocall_trigger = st.number_input("Niveau d'Autocall (%)", value=100)
+        else: # Capital Garanti
+            participation = st.slider("Participation à la hausse (%)", 50, 150, 100)
+            protection = 100 # Capital garanti
+            
+        st.markdown("---")
+        market_env = st.selectbox("Environnement de Volatilité", ["Faible (<15%)", "Moyenne (15-25%)", "Élevée (>25%)"])
 
-    with col_pitch:
-        st.subheader(f" Proposition : {product_name}")
-        st.info(f"**Logique Financière :** {strategy_desc}")
+    with col_output:
+        st.markdown('<div class="highlight">2. Structuration & Pitch</div>', unsafe_allow_html=True)
         
-        st.markdown("### Draft d'Email Commercial (Le Pitch)")
-        st.markdown(f"""
-        > **Objet :** Idée d'investissement - Opportunité sur {underlying}
-        >
-        > Bonjour,
-        >
-        > Compte tenu de votre vue {client_view.split('(')[0].lower()} sur **{underlying}**, je voulais vous proposer une structure pertinente ce matin.
-        >
-        > Nous avons structuré un **{product_name}** qui répond à votre besoin de **{risk_profile.lower()}**.
-        >
-        > **Les points clés :**
-        > * **Sous-Jacent :** {underlying}
-        > * **Le mécanisme :** {strategy_desc}
-        > * **Pourquoi maintenant ?** La volatilité actuelle nous permet d'aller chercher un coupon attractif tout en gardant une marge de sécurité.
-        >
-        > Je suis disponible pour pricer la structure en direct avec vos paramètres spécifiques.
-        >
-        > Bien cordialement,
-        >
-        > **Romain Chalard**
-        """)
+        # --- MOTEUR DE PRICING SIMULÉ (Logique Heuristique pour la démo) ---
+        # Note pour le recruteur : Ceci est une simulation de logique de pricing pour démontrer la mécanique
+        base_coupon = 5.0 # Taux sans risque approx + spread
         
-        st.button("Copier le Pitch", help="Simule la copie dans le presse-papier")
+        # Impact Volatilité
+        vol_impact = 0
+        if market_env == "Élevée (>25%)": vol_impact = 3.0
+        elif market_env == "Moyenne (15-25%)": vol_impact = 1.5
+        
+        # Impact Structure
+        struct_yield = 0
+        if "Phoenix" in product_type:
+            # Plus la barrière est haute (risque), plus le coupon est bas. Plus la barrière est basse (safe), plus le coupon est bas... wait no.
+            # En vente d'option (Phoenix) : Plus on prend de risque (Barrière haute), plus on a de rendement ? Non, c'est l'inverse en structuration.
+            # Plus la barrière est basse (ex: 50%), plus l'option de vente vaut cher ? Non.
+            # Simplification : Plus la protection est "loin" (40%), plus le coupon est FAIBLE (car moins risqué).
+            # Plus la protection est proche (80%), plus le coupon est ÉLEVÉ (car risqué).
+            risk_premium = (barrier_protection - 40) * 0.15 
+            struct_yield = base_coupon + vol_impact + risk_premium
+            display_metric = f"{struct_yield:.2f}% / an"
+            metric_label = "Coupon Indicatif"
+            
+        elif "Garanti" in product_type:
+            # Capital Garanti : On paie pour la garantie, donc rendement faible ou participation ajustée
+            struct_yield = (participation / 100) * (base_coupon + vol_impact) 
+            # C'est un peu faux mathématiquement mais logique commercialement pour la démo
+            display_metric = f"{participation}%"
+            metric_label = "Participation à la hausse"
+            
+        else: # Athena
+            struct_yield = base_coupon + vol_impact + 2.0 # Prime d'autocall
+            display_metric = f"{struct_yield:.2f}% / an"
+            metric_label = "Rendement si Rappel"
+
+        # --- VISUALISATION (Term Sheet & Graph) ---
+        c1, c2 = st.columns([1, 2])
+        
+        with c1:
+            st.metric(label=metric_label, value=display_metric, delta="Pricing Live")
+            st.info(f"**Protection :** Jusqu'à -{100-barrier_protection}%" if "Garanti" not in product_type else "**Capital Garanti 100%**")
+        
+        with c2:
+            # Graphique de Payoff à Maturité
+            fig_payoff, ax_p = plt.subplots(figsize=(6, 3))
+            spots = np.linspace(0, 150, 100)
+            payoffs = np.zeros_like(spots)
+            
+            if "Phoenix" in product_type:
+                # Si Spot > Barrière Capital : 100% + Coupon (simplifié)
+                # Si Spot < Barrière Capital : Perte en capital
+                barrier_val = barrier_protection
+                for i, s in enumerate(spots):
+                    if s >= barrier_val:
+                        payoffs[i] = 100 + struct_yield # On récupère 100 + le coupon
+                    else:
+                        payoffs[i] = s # On perd (remboursement à la valeur de l'action)
+                
+                ax_p.plot(spots, payoffs, color='#4F8BF9', linewidth=2, label='Remboursement')
+                ax_p.axvline(barrier_val, color='red', linestyle='--', label=f'Barrière (-{100-barrier_val}%)')
+                ax_p.axhline(100, color='gray', linestyle=':', linewidth=0.5)
+                ax_p.fill_between(spots, 0, payoffs, alpha=0.1, color='#4F8BF9')
+
+            elif "Garanti" in product_type:
+                # Call Spread : Max(100, 100 + Participation * (S-100))
+                payoffs = [100 + max(0, participation/100 * (s - 100)) for s in spots]
+                ax_p.plot(spots, payoffs, color='green', linewidth=2)
+                ax_p.axhline(100, color='green', linestyle='--', label='Capital Garanti')
+
+            ax_p.set_title("Scénario à Maturité (Payoff)", fontsize=10)
+            ax_p.set_xlabel("% du Prix Initial")
+            ax_p.set_ylabel("Remboursement (%)")
+            ax_p.legend(fontsize=8)
+            ax_p.grid(True, alpha=0.3)
+            st.pyplot(fig_payoff)
+
+        # --- GENERATEUR DE PITCH ---
+        st.markdown("### Email Client (Généré)")
+        pitch_text = f"""
+        **Objet :** Opportunité {product_type} sur {underlying} - Coupon {display_metric}
+        
+        Bonjour,
+        
+        Dans le contexte actuel de volatilité **{market_env.split('(')[0].lower()}**, nous avons structuré une solution pour optimiser le rendement de votre poche actions.
+        
+        **La Proposition : {underlying}**
+        1. **Rendement :** {metric_label} cible de **{display_metric}**.
+        2. **Protection :** Le capital est protégé jusqu'à une baisse de **{100-barrier_protection if "Garanti" not in product_type else 0}%** à maturité.
+        3. **Mécanisme :** { "Coupons mémorisables versés si l'action tient la barrière de " + str(barrier_coupon) + "%." if "Phoenix" in product_type else "Participation à la hausse avec 0 risque en capital."}
+        
+        C'est le moment idéal pour pricer cette structure car la volatilité nous permet d'aller chercher ce niveau de coupon attractif.
+        
+        Bien à vous,
+        Romain Chalard
+        """
+        st.text_area("Draft prêt à envoyer :", value=pitch_text.replace("        ", ""), height=250)
 
 # --- TAB 5 : EXTRA & PERSO ---
 with tab_extra:
