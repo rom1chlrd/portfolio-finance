@@ -452,16 +452,16 @@ with tab_sales:
         # --- GENERATEUR DE PITCH ---
         st.markdown("### Email Client (Généré)")
         pitch_text = f"""
-        **Objet :** Opportunité {product_type} sur {underlying} - Coupon {display_metric}
+        Objet : Opportunité {product_type} sur {underlying} - Coupon {display_metric}
         
         Bonjour,
         
         Dans le contexte actuel de volatilité **{market_env.split('(')[0].lower()}**, nous avons structuré une solution pour optimiser le rendement de votre poche actions.
         
-        **La Proposition : {underlying}**
-        1. **Rendement :** {metric_label} cible de **{display_metric}**.
-        2. **Protection :** Le capital est protégé jusqu'à une baisse de **{100-barrier_protection if "Garanti" not in product_type else 0}%** à maturité.
-        3. **Mécanisme :** { "Coupons mémorisables versés si l'action tient la barrière de " + str(barrier_coupon) + "%." if "Phoenix" in product_type else "Participation à la hausse avec 0 risque en capital."}
+        La Proposition : {underlying}
+        1. Rendement : {metric_label} cible de {display_metric}.
+        2. Protection : Le capital est protégé jusqu'à une baisse de {100-barrier_protection if "Garanti" not in product_type else 0}% à maturité.
+        3. Mécanisme : { "Coupons mémorisables versés si l'action tient la barrière de " + str(barrier_coupon) + "%." if "Phoenix" in product_type else "Participation à la hausse avec 0 risque en capital."}
         
         C'est le moment idéal pour pricer cette structure car la volatilité nous permet d'aller chercher ce niveau de coupon attractif.
         
