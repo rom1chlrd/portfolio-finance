@@ -100,7 +100,7 @@ st.markdown(f'<div class="main-header">Portfolio Technique & Financier</div>', u
 st.markdown(f"**{CONTACT_INFO['tagline']}**")
 
 # Onglets de navigation
-tab_about, tab_skills, tab_tech, tab_mc, tab_market, tab_extra = st.tabs(["👤 À Propos", "💼 Compétences", "💻 Pricer Options", "🎲 Monte Carlo", "📊 Market Data", "🌍 Extra & Perso"])
+tab_about, tab_skills, tab_tech, tab_mc, tab_market, tab_sales, tab_extra = st.tabs(["👤 À Propos", "💼 Compétences", "💻 Pricer Options", "🎲 Monte Carlo", "📊 Market Data", "📢 Sales Pitch", "🌍 Extra & Perso"])
 
 # --- TAB 1 : À PROPOS & AMBITIONS ---
 with tab_about:
@@ -319,7 +319,7 @@ with tab_market:
                 corr_matrix = returns.corr()
                 
                 # Affichage 1 : La Heatmap
-                st.subheader("🔥 Matrice de Corrélation")
+                st.subheader("Matrice de Corrélation")
                 fig_corr, ax_corr = plt.subplots(figsize=(8, 6))
                 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, center=0, ax=ax_corr)
                 st.pyplot(fig_corr)
@@ -327,7 +327,7 @@ with tab_market:
                 st.divider()
                 
                 # Affichage 2 : Performance comparée
-                st.subheader("📈 Performance Relative (Base 100)")
+                st.subheader("Performance Relative (Base 100)")
                 # Normalisation base 100 pour comparer
                 normalized_data = (data / data.iloc[0]) * 100
                 st.line_chart(normalized_data)
@@ -337,9 +337,77 @@ with tab_market:
         else:
             st.warning("Veuillez sélectionner au moins 2 actifs pour afficher la corrélation.")
 
+# --- TAB SALES : GÉNÉRATEUR DE PITCH ---
+with tab_sales:
+    st.markdown("## Assistant Sales : Générateur de Trade Ideas")
+    st.markdown("""
+    Le rôle d'un Sales est de transformer une vue de marché en une solution d'investissement concrète.
+    Cet outil simule la proposition d'un produit structuré adapté au profil du client.
+    """)
+    
+    col_client, col_pitch = st.columns([1, 2])
+    
+    with col_client:
+        st.markdown('<div class="highlight">Profil du Client</div>', unsafe_allow_html=True)
+        client_view = st.selectbox("Anticipation de Marché", ["Haussier (Bullish)", "Neutre / Modérément Haussier", "Baissier (Bearish)"])
+        risk_profile = st.radio("Appétit au Risque", ["Prudent (Protection Capital)", "Yield (Recherche de rendement)"])
+        underlying = st.selectbox("Sous-jacent cible", ["Euro Stoxx 50", "S&P 500", "LVMH", "TotalEnergies", "Tesla"])
+        
+        # Logique simple de recommandation (Moteur de recommandation)
+        product_name = ""
+        strategy_desc = ""
+        
+        if client_view == "Haussier (Bullish)":
+            if risk_profile == "Prudent":
+                product_name = "Call Spread (Capital Garanti)"
+                strategy_desc = "Participation à la hausse tout en protégeant 100% du capital à maturité."
+            else:
+                product_name = "Bonus Cap / Outperformance"
+                strategy_desc = "Levier sur la performance à la hausse avec une barrière de protection partielle."
+                
+        elif client_view == "Neutre / Modérément Haussier":
+            if risk_profile == "Prudent":
+                product_name = "Autocall 'Athena' (Recall bas)"
+                strategy_desc = "Objectif de remboursement anticipé rapide même si le marché stagne."
+            else:
+                product_name = "Phoenix Mémoire (Classic Yield)"
+                strategy_desc = "Distribution de coupons mensuels tant que le marché ne s'effondre pas (Barrière -40%). Le Best-Seller."
+                
+        else: # Baissier
+            product_name = "Put Spread"
+            strategy_desc = "Outil de couverture (Hedging) pour profiter de la baisse et protéger le portefeuille."
+
+    with col_pitch:
+        st.subheader(f" Proposition : {product_name}")
+        st.info(f"**Logique Financière :** {strategy_desc}")
+        
+        st.markdown("### 📧 Draft d'Email Commercial (Le Pitch)")
+        st.markdown(f"""
+        > **Objet :** Idée d'investissement - Opportunité sur {underlying}
+        >
+        > Bonjour,
+        >
+        > Compte tenu de votre vue **{client_view.split('(')[0].lower()}** sur **{underlying}**, je voulais vous proposer une structure pertinente ce matin.
+        >
+        > Nous avons structuré un **{product_name}** qui répond à votre besoin de **{risk_profile.lower()}**.
+        >
+        > **Les points clés :**
+        > * **Sous-Jacent :** {underlying}
+        > * **Le mécanisme :** {strategy_desc}
+        > * **Pourquoi maintenant ?** La volatilité actuelle nous permet d'aller chercher un coupon attractif tout en gardant une marge de sécurité.
+        >
+        > Je suis disponible pour pricer la structure en direct avec vos paramètres spécifiques.
+        >
+        > Bien cordialement,
+        >
+        > **Romain Chalard**
+        """)
+        
+        st.button("Copier le Pitch", help="Simule la copie dans le presse-papier")
+
 # --- TAB 5 : EXTRA & PERSO ---
 with tab_extra:
-    st.markdown("## 🌍 Profil International & Leadership")
+    st.markdown("## Profil International & Leadership")
     st.write("Mon parcours est marqué par une forte mobilité internationale et des responsabilités associatives.")
 
     col_map, col_lifestyle = st.columns([2, 1])
