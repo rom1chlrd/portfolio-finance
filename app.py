@@ -381,13 +381,13 @@ with tab_sales:
         st.subheader(f" Proposition : {product_name}")
         st.info(f"**Logique Financière :** {strategy_desc}")
         
-        st.markdown("### 📧 Draft d'Email Commercial (Le Pitch)")
+        st.markdown("### Draft d'Email Commercial (Le Pitch)")
         st.markdown(f"""
         > **Objet :** Idée d'investissement - Opportunité sur {underlying}
         >
         > Bonjour,
         >
-        > Compte tenu de votre vue **{client_view.split('(')[0].lower()}** sur **{underlying}**, je voulais vous proposer une structure pertinente ce matin.
+        > Compte tenu de votre vue {client_view.split('(')[0].lower()} sur **{underlying}**, je voulais vous proposer une structure pertinente ce matin.
         >
         > Nous avons structuré un **{product_name}** qui répond à votre besoin de **{risk_profile.lower()}**.
         >
