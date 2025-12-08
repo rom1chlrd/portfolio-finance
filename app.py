@@ -168,7 +168,7 @@ with tab_tech:
     st.markdown("## ⚡ Pricing & Surface de Risque 3D")
     st.write("Visualisation interactive de la sensibilité du prix (Axe Z) par rapport au Spot (Axe X) et à la Volatilité (Axe Y).")
     
-    col_input, col_graph = st.columns([1, 3]) # J'ai élargi la colonne graph pour la 3D
+    col_input, col_graph = st.columns([1, 3])
     
     with col_input:
         st.markdown('<div class="highlight">Paramètres</div>', unsafe_allow_html=True)
@@ -183,7 +183,7 @@ with tab_tech:
         r = interest_rate / 100.0
         sigma = volatility / 100.0
         
-        # Calcul du point actuel pour l'afficher
+        # Calcul du point actuel
         price, delta, gamma, vega, theta, rho = black_scholes(current_price, strike_price, T, r, sigma, option_type)
         
         st.divider()
@@ -192,34 +192,35 @@ with tab_tech:
         st.metric("Vega (ν)", f"{vega:.3f}")
 
     with col_graph:
-        # --- GÉNÉRATION DE LA SURFACE 3D ---
-        
-        # 1. Création des axes (Meshgrid)
-        # On va regarder large : Spot de -20% à +20%, Volatilité de 10% à 60%
+        # --- GÉNÉRATION SURFACE 3D ---
         spot_range = np.linspace(current_price * 0.8, current_price * 1.2, 20)
         vol_range = np.linspace(0.10, 0.60, 20)
         
         X, Y = np.meshgrid(spot_range, vol_range)
         Z = np.zeros_like(X)
         
-        # 2. Calcul du prix pour chaque point de la grille
         for i in range(len(vol_range)):
             for j in range(len(spot_range)):
                 p_sim, _, _, _, _, _ = black_scholes(X[i, j], strike_price, T, r, Y[i, j], option_type)
                 Z[i, j] = p_sim
 
-        # 3. Création du Graphique Plotly
-        fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y, colorscale='Viridis')])
+        # --- C'EST ICI QUE CA SE PASSE (hovertemplate) ---
+        fig = go.Figure(data=[go.Surface(
+            z=Z, x=X, y=Y, 
+            colorscale='Viridis',
+            # Voici la formule magique pour le texte au survol :
+            hovertemplate="<b>Spot: %{x:.1f}</b><br>Vol: %{y:.1%}<br>Prix: %{z:.2f} €<extra></extra>"
+        )])
 
         fig.update_layout(
             title=f"Surface de Prix ({option_type})",
             scene=dict(
-                xaxis_title='Spot Price (S)',
+                xaxis_title='Spot (S)',
                 yaxis_title='Volatilité (σ)',
-                zaxis_title='Prix Option (€)',
-                camera=dict(eye=dict(x=1.5, y=1.5, z=0.8)) # Angle de vue par défaut
+                zaxis_title='Prix (€)',
+                camera=dict(eye=dict(x=1.5, y=1.5, z=0.8))
             ),
-            margin=dict(l=0, r=0, b=0, t=30), # Marges réduites
+            margin=dict(l=0, r=0, b=0, t=30),
             height=500
         )
         
