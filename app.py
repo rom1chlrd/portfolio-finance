@@ -522,7 +522,7 @@ with tab_extra:
         """)
 
     with col_lifestyle:
-        st.markdown("###Networking & Business")
+        st.markdown("### Networking & Business")
         st.info("**Ambassadeur Agorize**")
         st.markdown("""
         Une expérience de terrain au contact des grandes entreprises (KPMG, BPCE, Huawei...) :
