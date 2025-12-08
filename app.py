@@ -502,7 +502,7 @@ with tab_extra:
         view_state = pdk.ViewState(
             latitude=10,
             longitude=0,
-            zoom=0.4,
+            zoom=0.3,
             pitch=0,
         )
 
