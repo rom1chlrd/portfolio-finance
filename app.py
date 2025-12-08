@@ -112,7 +112,7 @@ with tab_about:
         st.info("""
         **Recherche de stage (6 mois) à partir de Juin 2026**
         
-        Actuellement en cycle ingénieur à **Junia HEI** (Lille), je construis mon parcours autour d'une double compétence : 
+        Actuellement en cycle ingénieur à **HEI** (Lille), je construis mon parcours autour d'une double compétence : 
         l'ingénierie financière (Maths/Code) et l'agilité commerciale. 
         
         Je rejoindrai l'**University of Florida** en Janvier 2026 pour me spécialiser en Finance de Marché.
@@ -138,34 +138,33 @@ with tab_about:
 
 # --- TAB 2 : COMPÉTENCES & EXPÉRIENCES ---
 with tab_skills:
-    st.markdown("### Compétences démontrées par l'expérience")
-    st.markdown("Je ne liste pas simplement des mots-clés, je les applique concrètement.")
+    st.markdown("### 🛠 Compétences démontrées")
     
-    # [cite_start]On utilise les données extraites du CV [cite: 22, 28, 19, 13]
+    # Liste mise à jour (Agorize ici, Oenologie en Extra)
     skills_data = [
         {"Compétence": "Modélisation Mathématique", "Contexte": "Stage Sodexo Bateaux Parisiens", "Réalisation": "Conception d'un modèle complet d'émissions de CO2 sur Excel/VBA pour toute la flotte."},
-        {"Compétence": "Négociation & Trésorerie", "Contexte": "Partenariats Commerciaux", "Réalisation": "Closing de 8 contrats fournisseurs et pilotage rigoureux d'un budget de 6 000 €/an (P&L)."},
+        {"Compétence": "Prospection & Pitch", "Contexte": "Ambassadeur Agorize", "Réalisation": "Promotion de challenges d'innovation pour des clients Corporate (KPMG, BPCE). Capacité à convaincre et fédérer."},
         {"Compétence": "Pédagogie & Vulgarisation", "Contexte": "Professeur Particulier", "Réalisation": "Capacité à expliquer des concepts complexes simplement. Hausse des notes de 40%."},
         {"Compétence": "Résilience & Adaptabilité", "Contexte": "Ouvrier Agricole (Nlle-Zélande)", "Réalisation": "Travail en équipe internationale (40 pers) dans un environnement physique exigeant."}
     ]
     
-    # Affichage en grille propre
     for skill in skills_data:
-        with st.container():
-            st.markdown(f"**{skill['Compétence']}**")
-            st.caption(f"📍 {skill['Contexte']}")
-            st.write(skill['Réalisation'])
-            st.divider()
+        st.markdown(f"**{skill['Compétence']}** <span style='color:#666; font-size:0.9em'> — {skill['Contexte']}</span>", unsafe_allow_html=True)
+        st.write(skill['Réalisation'])
+        
+        # ASTUCE : Une ligne de séparation HTML "faite main" avec très peu de marge
+        st.markdown("<hr style='margin: 5px 0px 15px 0px; border: none; border-top: 1px solid #e6e6e6;'>", unsafe_allow_html=True)
 
-    st.markdown("### Langues & Certifications")
+    # Indicateurs (KPIs)
+    st.markdown("") # Petit espace
     c1, c2, c3 = st.columns(3)
     c1.metric("Anglais", "Courant (C1)", "Cambridge: 186")
-    c2.metric("Excel", "Avancé", "TOSA: 868/1000")
+    c2.metric("Excel", "Expert", "TOSA: 868")
     c3.metric("Allemand", "Professionnel", "Notions")
-
+    
 # --- TAB 3 : PRICER OPTION  ---
 with tab_tech:
-    st.markdown("## ⚡ Pricing & Surface de Risque 3D")
+    st.markdown("## Pricing & Surface de Risque 3D")
     st.write("Visualisation interactive de la sensibilité du prix (Axe Z) par rapport au Spot (Axe X) et à la Volatilité (Axe Y).")
     
     col_input, col_graph = st.columns([1, 3])
@@ -522,14 +521,14 @@ with tab_extra:
         📍 **Te Puke (NZ)** : Ouvrier agricole saisonnier (2025)
         """)
 
-    with col_lifestyle:
-        st.markdown("### Networking & Business")
-        st.info("**Ambassadeur Agorize**")
-        st.markdown("""
-        Une expérience de terrain au contact des grandes entreprises (KPMG, BPCE, Huawei...) :
-        * **Prospection :** Promotion des challenges d'innovation auprès des étudiants.
-        * **Intermédiation :** Faire le pont entre le monde académique et les besoins corporate.
-        * **Communication :** Pitcher des opportunités complexes de manière attractive.
+    with c_soft:
+        st.markdown("### Leadership")
+        st.info("**Président Club Oenologie**")
+        st.write("""
+        Une aventure humaine et entrepreneuriale :
+        * **Management :** Recrutement et coordination de 20 membres actifs.
+        * **Event :** Organisation de dégustations pour 400 étudiants.
+        * **Gestion :** Pilotage d'un budget de 6 000 €/an et partenariats.
         """)
         
         st.divider()
