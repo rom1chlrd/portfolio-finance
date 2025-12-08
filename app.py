@@ -156,10 +156,10 @@ with tab_skills:
         st.markdown("<hr style='margin: 5px 0px 15px 0px; border: none; border-top: 1px solid #e6e6e6;'>", unsafe_allow_html=True)
 
     # Indicateurs (KPIs)
-    st.markdown("") # Petit espace
+    st.markdown("### Langues & Certifications")
     c1, c2, c3 = st.columns(3)
     c1.metric("Anglais", "Courant (C1)", "Cambridge: 186")
-    c2.metric("Excel", "Expert", "TOSA: 868/1000")
+    c2.metric("Excel", "Expert", "TOSA: 868")
     c3.metric("Allemand", "Professionnel", "Notions")
     
 # --- TAB 3 : PRICER OPTION  ---
@@ -464,6 +464,7 @@ with tab_sales:
         3. Mécanisme : { "Coupons mémorisables versés si l'action tient la barrière de " + str(barrier_coupon) + "%." if "Phoenix" in product_type else "Participation à la hausse avec 0 risque en capital."}
         
         C'est le moment idéal pour pricer cette structure car la volatilité nous permet d'aller chercher ce niveau de coupon attractif.
+        Je suis disponible pour en discuter de vive voix et ajuster les paramètres selon vos contraintes.
         
         Bien à vous,
         Romain Chalard
