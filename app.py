@@ -7,6 +7,7 @@ from scipy.stats import norm
 from datetime import date
 import pydeck as pdk
 import yfinance as yf
+import plotly.graph_objects as go
 
 # --- CONFIGURATION GÉNÉRALE ---
 st.set_page_config(
