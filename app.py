@@ -143,7 +143,7 @@ with tab_skills:
     # [cite_start]On utilise les données extraites du CV [cite: 22, 28, 19, 13]
     skills_data = [
         {"Compétence": "Modélisation Mathématique", "Contexte": "Stage Sodexo Bateaux Parisiens", "Réalisation": "Conception d'un modèle complet d'émissions de CO2 sur Excel/VBA pour toute la flotte."},
-        {"Compétence": "Leadership & Budget", "Contexte": "Président Club Oenologie", "Réalisation": "Gestion d'un budget de 6k€/an, management de 20 membres, négociation avec 8 partenaires."},
+        {"Compétence": "Négociation & Trésorerie", "Contexte": "Partenariats Commerciaux", "Réalisation": "Closing de 8 contrats fournisseurs et pilotage rigoureux d'un budget de 6 000 €/an (P&L)."},
         {"Compétence": "Pédagogie & Vulgarisation", "Contexte": "Professeur Particulier", "Réalisation": "Capacité à expliquer des concepts complexes simplement. Hausse des notes de 40%."},
         {"Compétence": "Résilience & Adaptabilité", "Contexte": "Ouvrier Agricole (Nlle-Zélande)", "Réalisation": "Travail en équipe internationale (40 pers) dans un environnement physique exigeant."}
     ]
@@ -522,13 +522,14 @@ with tab_extra:
         """)
 
     with col_lifestyle:
-        st.markdown("### Leadership")
-        st.info("**Président du Club d'Oenologie**")
+        with col_lifestyle:
+        st.markdown("###Networking & Business")
+        st.info("**Ambassadeur Agorize**")
         st.markdown("""
-        Une expérience entrepreneuriale concrète :
-        * **Budget :** Gestion de 6 000€/an.
-        * **Négociation :** Partenariats avec 8 domaines.
-        * **Management :** Équipe de 20 étudiants.
+        Une expérience de terrain au contact des grandes entreprises (KPMG, BPCE, Huawei...) :
+        * **Prospection :** Promotion des challenges d'innovation auprès des étudiants.
+        * **Intermédiation :** Faire le pont entre le monde académique et les besoins corporate.
+        * **Communication :** Pitcher des opportunités complexes de manière attractive.
         """)
         
         st.divider()
