@@ -132,6 +132,8 @@ with tab_about:
         **2026 (Jan-Mai)** 🇺🇸 **University of Florida** *Finance de Marché & Supply Chain*
         
         **2024 - Présent** 🇫🇷 **Junia HEI, Lille** *Ingénierie Financière* *(Maths, VBA, Analyse Financière)*
+
+        **2022 - 2024** 🇫🇷 **Prépa Lycée LaSalle, Lille** *Maths, Physique*
         
         **2019 - 2022** 🇺🇸 **Academica High School** *Dual Diploma (US High School Diploma)*
         """)
