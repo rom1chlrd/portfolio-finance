@@ -337,7 +337,7 @@ with tab_market:
         else:
             st.warning("Veuillez sélectionner au moins 2 actifs pour afficher la corrélation.")
 
-# --- TAB SALES : COCKPIT COMMERCIAL AVANCÉ ---
+# --- TAB SALES ---
 with tab_sales:
     st.markdown("## Cockpit Sales & Structuration")
     st.markdown("""
@@ -456,7 +456,7 @@ with tab_sales:
         
         Bonjour,
         
-        Dans le contexte actuel de volatilité **{market_env.split('(')[0].lower()}**, nous avons structuré une solution pour optimiser le rendement de votre poche actions.
+        Dans le contexte actuel de volatilité {market_env.split('(')[0].lower()}, nous avons structuré une solution pour optimiser le rendement de votre poche actions.
         
         La Proposition : {underlying}
         1. Rendement : {metric_label} cible de {display_metric}.
@@ -470,7 +470,7 @@ with tab_sales:
         """
         st.text_area("Draft prêt à envoyer :", value=pitch_text.replace("        ", ""), height=250)
 
-# --- TAB 5 : EXTRA & PERSO ---
+# --- TAB : EXTRA & PERSO ---
 with tab_extra:
     st.markdown("## Profil International & Leadership")
     st.write("Mon parcours est marqué par une forte mobilité internationale et des responsabilités associatives.")
