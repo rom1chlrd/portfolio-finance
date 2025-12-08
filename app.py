@@ -140,12 +140,11 @@ with tab_about:
 with tab_skills:
     st.markdown("### Compétences démontrées")
     
-    # Liste mise à jour (Agorize ici, Oenologie en Extra)
     skills_data = [
         {"Compétence": "Modélisation Mathématique", "Contexte": "Stage Sodexo Bateaux Parisiens", "Réalisation": "Conception d'un modèle complet d'émissions de CO2 sur Excel/VBA pour toute la flotte."},
-        {"Compétence": "Prospection & Pitch", "Contexte": "Ambassadeur Agorize", "Réalisation": "Promotion de challenges d'innovation pour des clients Corporate (KPMG, BPCE). Capacité à convaincre et fédérer."},
-        {"Compétence": "Pédagogie & Vulgarisation", "Contexte": "Professeur Particulier", "Réalisation": "Capacité à expliquer des concepts complexes simplement. Hausse des notes de 40%."},
-        {"Compétence": "Résilience & Adaptabilité", "Contexte": "Ouvrier Agricole (Nlle-Zélande)", "Réalisation": "Travail en équipe internationale (40 pers) dans un environnement physique exigeant."}
+        {"Compétence": "Prospection & Pitch", "Contexte": "Ambassadeur Agorize", "Réalisation": "Promotion de challenges d'innovation pour des clients Corporate (KPMG, BPCE...). Capacité à convaincre et fédérer."},
+        {"Compétence": "Pédagogie & Vulgarisation", "Contexte": "Professeur Particulier", "Réalisation": "Capacité à expliquer des concepts complexes simplement. Hausse des notes de 40% en 3 mois."},
+        {"Compétence": "Résilience & Adaptabilité", "Contexte": "Ouvrier Agricole (Nouvelle-Zélande)", "Réalisation": "Travail en équipe internationale (40 pers) dans un environnement physique exigeant."}
     ]
     
     for skill in skills_data:
@@ -248,7 +247,7 @@ with tab_mc:
         mc_T = st.number_input("Horizon (Années)", value=1.0)
         
     with col_sim_graph:
-        # LOGIQUE DE CALCULE MONTE CARLO
+        # LOGIQUE DE CALCUL MONTE CARLO
         # 1. Préparation des variables
         dt = mc_T / time_steps
         S = np.zeros((time_steps + 1, n_sims))
