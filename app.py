@@ -138,7 +138,7 @@ with tab_about:
 
 # --- TAB 2 : COMPÉTENCES & EXPÉRIENCES ---
 with tab_skills:
-    st.markdown("### 🛠 Compétences démontrées")
+    st.markdown("### Compétences démontrées")
     
     # Liste mise à jour (Agorize ici, Oenologie en Extra)
     skills_data = [
@@ -159,7 +159,7 @@ with tab_skills:
     st.markdown("") # Petit espace
     c1, c2, c3 = st.columns(3)
     c1.metric("Anglais", "Courant (C1)", "Cambridge: 186")
-    c2.metric("Excel", "Expert", "TOSA: 868")
+    c2.metric("Excel", "Expert", "TOSA: 868/1000")
     c3.metric("Allemand", "Professionnel", "Notions")
     
 # --- TAB 3 : PRICER OPTION  ---
