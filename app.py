@@ -522,7 +522,7 @@ with tab_extra:
         📍 **Te Puke (NZ)** : Ouvrier agricole saisonnier (2025)
         """)
 
-    with c_soft:
+    with col_lifestyle:
         st.markdown("### Leadership")
         st.info("**Président Club Oenologie**")
         st.write("""
