@@ -165,66 +165,65 @@ with tab_skills:
 
 # --- TAB 3 : PRICER OPTION  ---
 with tab_tech:
-    st.markdown("## Pricing d'Option & Structuration")
-    st.markdown("""
-    En tant que candidat en structuration, je code mes propres outils pour comprendre la mécanique des produits.
-    Ci-dessous, mon implémentation du modèle **Black-Scholes** en Python.
-    """)
+    st.markdown("## ⚡ Pricing & Surface de Risque 3D")
+    st.write("Visualisation interactive de la sensibilité du prix (Axe Z) par rapport au Spot (Axe X) et à la Volatilité (Axe Y).")
     
-    col_input, col_graph = st.columns([1, 2])
+    col_input, col_graph = st.columns([1, 3]) # J'ai élargi la colonne graph pour la 3D
     
     with col_input:
-        st.markdown('<div class="highlight">Paramètres du Produit</div>', unsafe_allow_html=True)
-        current_price = st.number_input("Prix du Sous-jacent (S)", value=100.0, step=1.0)
+        st.markdown('<div class="highlight">Paramètres</div>', unsafe_allow_html=True)
+        current_price = st.number_input("Prix Spot (S)", value=100.0, step=1.0)
         strike_price = st.number_input("Strike (K)", value=100.0, step=1.0)
         maturity_days = st.slider("Maturité (Jours)", 1, 365, 30)
-        volatility = st.slider("Volatilité Implicite (%)", 5.0, 100.0, 20.0)
-        interest_rate = st.number_input("Taux sans risque (%)", value=1.5, step=0.1)
-        option_type = st.radio("Type d'Option", ["Call", "Put"], horizontal=True)
+        volatility = st.slider("Volatilité (%)", 5.0, 100.0, 20.0)
+        interest_rate = st.number_input("Taux (%)", value=1.5, step=0.1)
+        option_type = st.radio("Type", ["Call", "Put"], horizontal=True)
         
-        # Conversion pour le modèle
         T = maturity_days / 365.0
         r = interest_rate / 100.0
         sigma = volatility / 100.0
         
-    # Calculs
-    price, delta, gamma, vega, theta, rho = black_scholes(current_price, strike_price, T, r, sigma, option_type)
-    
-    with col_graph:
-        # Affichage des KPIs (Grecques)
-        st.markdown("### Valorisation & Sensibilités (Grecques)")
-        kpi1, kpi2, kpi3 = st.columns(3)
-        kpi1.metric("Prix de l'Option", f"{price:.2f} €", delta_color="off")
-        kpi2.metric("Delta (Δ)", f"{delta:.3f}", help="Sensibilité au prix du sous-jacent")
-        kpi3.metric("Gamma (Γ)", f"{gamma:.4f}", help="Sensibilité du Delta")
-        
-        kpi4, kpi5, kpi6 = st.columns(3)
-        kpi4.metric("Vega (ν)", f"{vega:.3f}", help="Sensibilité à 1% de volatilité")
-        kpi5.metric("Theta (Θ)", f"{theta:.3f}", help="Perte de temps par jour")
-        kpi6.metric("Rho (ρ)", f"{rho:.3f}", help="Sensibilité aux taux")
+        # Calcul du point actuel pour l'afficher
+        price, delta, gamma, vega, theta, rho = black_scholes(current_price, strike_price, T, r, sigma, option_type)
         
         st.divider()
+        st.metric("Prix Option", f"{price:.2f} €")
+        st.metric("Delta (Δ)", f"{delta:.3f}")
+        st.metric("Vega (ν)", f"{vega:.3f}")
+
+    with col_graph:
+        # --- GÉNÉRATION DE LA SURFACE 3D ---
         
-        # Heatmap
-        st.markdown(" Analyse de Scénarios : Impact Prix (Spot vs Volatilité)")
+        # 1. Création des axes (Meshgrid)
+        # On va regarder large : Spot de -20% à +20%, Volatilité de 10% à 60%
+        spot_range = np.linspace(current_price * 0.8, current_price * 1.2, 20)
+        vol_range = np.linspace(0.10, 0.60, 20)
         
-        # Génération de la matrice pour la Heatmap
-        s_range = np.linspace(current_price * 0.85, current_price * 1.15, 10)
-        v_range = np.linspace(sigma * 0.5, sigma * 1.5, 10)
+        X, Y = np.meshgrid(spot_range, vol_range)
+        Z = np.zeros_like(X)
         
-        heatmap_data = np.zeros((len(v_range), len(s_range)))
+        # 2. Calcul du prix pour chaque point de la grille
+        for i in range(len(vol_range)):
+            for j in range(len(spot_range)):
+                p_sim, _, _, _, _, _ = black_scholes(X[i, j], strike_price, T, r, Y[i, j], option_type)
+                Z[i, j] = p_sim
+
+        # 3. Création du Graphique Plotly
+        fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y, colorscale='Viridis')])
+
+        fig.update_layout(
+            title=f"Surface de Prix ({option_type})",
+            scene=dict(
+                xaxis_title='Spot Price (S)',
+                yaxis_title='Volatilité (σ)',
+                zaxis_title='Prix Option (€)',
+                camera=dict(eye=dict(x=1.5, y=1.5, z=0.8)) # Angle de vue par défaut
+            ),
+            margin=dict(l=0, r=0, b=0, t=30), # Marges réduites
+            height=500
+        )
         
-        for i, v_sim in enumerate(v_range):
-            for j, s_sim in enumerate(s_range):
-                p_sim, _, _, _, _, _ = black_scholes(s_sim, strike_price, T, r, v_sim, option_type)
-                heatmap_data[i, j] = p_sim
-                
-        fig, ax = plt.subplots(figsize=(8, 4))
-        sns.heatmap(heatmap_data, xticklabels=np.round(s_range, 1), yticklabels=np.round(v_range*100, 1), annot=True, fmt=".1f", cmap="viridis", ax=ax)
-        ax.set_xlabel("Spot Price")
-        ax.set_ylabel("Volatilité (%)")
-        ax.invert_yaxis()
-        st.pyplot(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
 # --- TAB 4 : SIMULATION MONTE CARLO ---
 with tab_mc:
