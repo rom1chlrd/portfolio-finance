@@ -522,7 +522,6 @@ with tab_extra:
         """)
 
     with col_lifestyle:
-        with col_lifestyle:
         st.markdown("###Networking & Business")
         st.info("**Ambassadeur Agorize**")
         st.markdown("""
