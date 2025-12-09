@@ -101,7 +101,7 @@ st.markdown(f'<div class="main-header">Portfolio Technique & Financier | Romain 
 st.markdown(f"**{CONTACT_INFO['tagline']}**")
 
 # Onglets de navigation
-tab_about, tab_skills, tab_tech, tab_mc, tab_market, tab_sales, tab_extra = st.tabs(["👤 À Propos", "💼 Compétences", "💻 Pricer Options", "🎲 Monte Carlo", "📊 Market Data", "📢 Sales Pitch", "🌍 Extra & Perso"])
+tab_about, tab_tech, tab_mc, tab_market, tab_sales, tab_skills, tab_extra = st.tabs(["👤 À Propos", "💼 Compétences", "💻 Pricer Options", "🎲 Monte Carlo", "📊 Market Data", "📢 Sales Pitch", "🌍 Extra & Perso"])
 
 # --- TAB 1 : À PROPOS & AMBITIONS ---
 with tab_about:
