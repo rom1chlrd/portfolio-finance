@@ -441,24 +441,42 @@ with tab_sales:
         risk = st.text_area("Risque Principal", "Valorisation tendue et concurrence accrue.")
         
     with c2:
-        st.markdown("### Investment Memo Draft")
-        memo_body = f"""
-        **TO:** Investment Committee
-        **ASSET:** {ticker_memo}
-        **ACTION:** {reco} ({horizon})
+        st.markdown("### Aperçu du Mémo")
         
-        **THÈSE D'INVESTISSEMENT :**
-        Notre conviction sur {ticker_memo} repose sur : {catalyst}
-        
-        **RISQUES :**
-        Nous surveillons attentivement : {risk}
-        
-        **CONCLUSION :**
-        Compte tenu du couple rendement/risque actuel, nous recommandons de passer à l'{reco}.
-        
-        Romain Chalard - Analyste Junior
-        """
-        st.info(memo_body)
+        # On utilise st.markdown avec du HTML pour un rendu "Document Officiel" parfait
+        st.markdown(f"""
+        <div style="
+            background-color: white; 
+            padding: 25px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 5px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            color: #1f2937;
+            font-family: 'Arial', sans-serif;
+        ">
+            <div style="border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #1e3a8a; text-align: center; text-transform: uppercase;">Investment Committee Memo</h3>
+            </div>
+
+            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-size: 0.9em;">
+                <p style="margin: 5px 0;"><strong> DATE :</strong> {date.today().strftime('%d/%m/%Y')}</p>
+                <p style="margin: 5px 0;"><strong> FROM :</strong> Romain Chalard (Analyste Quant Junior)</p>
+                <p style="margin: 5px 0;"><strong> ASSET :</strong> <span style="color: #2563eb; font-weight: bold;">{ticker_memo}</span></p>
+                <p style="margin: 5px 0;"><strong> ACTION :</strong> <span style="background-color: {'#dcfce7' if reco == 'BUY' else '#fee2e2'}; color: {'#166534' if reco == 'BUY' else '#991b1b'}; padding: 2px 8px; border-radius: 4px; font-weight: bold;">{reco}</span> ({horizon})</p>
+            </div>
+
+            <h4 style="color: #374151; border-left: 4px solid #2563eb; padding-left: 10px; margin-top: 20px;">1. Thèse d'Investissement</h4>
+            <p style="line-height: 1.6; color: #4b5563;">{catalyst}</p>
+
+            <h4 style="color: #374151; border-left: 4px solid #ef4444; padding-left: 10px; margin-top: 20px;">2. Facteurs de Risque</h4>
+            <p style="line-height: 1.6; color: #4b5563;">{risk}</p>
+
+            <div style="margin-top: 25px; padding: 15px; background-color: #eff6ff; border-left: 4px solid #2563eb;">
+                <strong>💡 Conclusion :</strong><br>
+                Compte tenu de l'analyse fondamentale et quantitative, nous recommandons d'initier une position <strong>{reco}</strong> sur ce titre.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
 # --- TAB SALES --- (pas sur le site)
 if False:
