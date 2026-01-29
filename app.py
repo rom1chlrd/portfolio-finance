@@ -32,7 +32,7 @@ st.markdown("""
 # --- DONNÉES DU CV (Hardcodées pour la simplicité) ---
 CONTACT_INFO = {
     "name": "Romain Chalard",
-    "tagline": "Étudiant en Ingénierie Financière | Recherche Stage 6 mois - Sales & Structuration",
+    "tagline": "Étudiant en Ingénierie Financière | Recherche Stage 6 mois - Asset Management",
     "phone": "+33 7 81 78 79 71",
     "email": "romain.chalard@student.junia.com",
     "location": "Paris, France",
@@ -108,14 +108,14 @@ with tab_about:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown("### Mon Objectif : La Structuration")
+        st.markdown("### Mon Objectif : Investment Management")
         st.info("""
         **Recherche de stage (6 mois) à partir de Juin 2026**
         
-        Actuellement en cycle ingénieur à **HEI** (Lille), je construis mon parcours autour d'une double compétence : 
-        l'ingénierie financière (Maths/Code) et l'agilité commerciale. 
-        
-        Je rejoindrai l'**University of Florida** en Janvier 2026 pour me spécialiser en Finance de Marché.
+        Actuellement en cycle ingénieur à **HEI** et en spécialisation Finance à l'**University of Florida**, 
+        je souhaite appliquer mes compétences en Data Analysis et Modélisation à la **gestion d'actifs**.
+
+        Mon approche : Utiliser la donnée (Python/Quant) pour optimiser la prise de décision d'investissement (Fondamentale).
         """)
         
         st.markdown("### Intérêt Personnel pour les Marchés")
@@ -288,189 +288,304 @@ with tab_mc:
         final_mean = mean_path[-1]
         st.metric("Prix moyen à maturité", f"{final_mean:.2f} €", delta=f"{((final_mean/mc_spot)-1)*100:.2f}% vs Spot")
 
-# --- TAB 6 : MARKET DATA & CORRELATION ---
+# --- TAB MARKET : ASSET MANAGEMENT & OPTIMISATION ---
 with tab_market:
-    st.markdown("## Analyse de Marché (Données Réelles)")
+    st.markdown("## Construction de Portefeuille (Markowitz)")
     st.markdown("""
-    En structuration, on travaille souvent sur des paniers d'actifs (Basket Options). 
-    Comprendre la corrélation entre les sous-jacents est crucial pour pricer le risque.
-    
-    *Les données ci-dessous sont récupérées en temps réel via l'API Yahoo Finance.*
+    En Asset Management, l'objectif est de maximiser le rendement pour un niveau de risque donné.
+    J'utilise ici la **Frontière Efficiente** pour visualiser l'allocation optimale d'un panier d'actifs.
     """)
     
     col_sel, col_viz = st.columns([1, 3])
     
     with col_sel:
-        st.markdown('<div class="highlight">Sélection du Panier</div>', unsafe_allow_html=True)
-        # Liste de tickers par défaut (CAC40 & Tech US)
-        default_tickers = ['AC.PA', 'MC.PA', 'TEP.PA', 'AAPL', 'MSFT', 'NVDA']
-        tickers = st.multiselect("Choix des Actions", default_tickers, default=default_tickers[:4])
-        period = st.selectbox("Période d'analyse", ["1mo", "3mo", "6mo", "1y", "5y"], index=3)
+        st.markdown('<div class="highlight">Sélection Assets</div>', unsafe_allow_html=True)
+        default_tickers = ['NVDA', 'AAPL', 'MSFT', 'GOOGL', 'JPM', 'XOM']
+        tickers = st.multiselect("Univers d'investissement", default_tickers, default=default_tickers[:4])
+        period = st.selectbox("Historique", ["1y", "2y", "5y"], index=0)
+        st.caption("Données Live Yahoo Finance")
         
     with col_viz:
         if len(tickers) > 1:
             try:
-                # Téléchargement des données
+                # 1. Récupération des Data
                 data = yf.download(tickers, period=period)['Close']
+                returns = data.pct_change().dropna()
                 
-                # Calcul des rendements quotidiens (Log returns)
-                returns = np.log(data / data.shift(1)).dropna()
+                mean_returns = returns.mean() * 252
+                cov_matrix = returns.cov() * 252
                 
-                # Calcul de la corrélation
-                corr_matrix = returns.corr()
+                # 2. Simulation de 2000 Portefeuilles (Monte Carlo)
+                num_portfolios = 2000
+                results = np.zeros((3, num_portfolios))
                 
-                # Affichage 1 : La Heatmap
-                st.subheader("Matrice de Corrélation")
-                fig_corr, ax_corr = plt.subplots(figsize=(8, 6))
-                sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, center=0, ax=ax_corr)
-                st.pyplot(fig_corr)
+                for i in range(num_portfolios):
+                    weights = np.random.random(len(tickers))
+                    weights /= np.sum(weights)
+                    
+                    p_return = np.sum(weights * mean_returns)
+                    p_std_dev = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+                    
+                    results[0,i] = p_return
+                    results[1,i] = p_std_dev
+                    results[2,i] = results[0,i] / results[1,i] # Sharpe Ratio (Simplified, Rf=0)
+
+                # 3. Visualisation Plotly
+                max_sharpe_idx = np.argmax(results[2])
+                sdp, rp = results[1,max_sharpe_idx], results[0,max_sharpe_idx]
                 
-                st.divider()
+                fig = go.Figure()
                 
-                # Affichage 2 : Performance comparée
-                st.subheader("Performance Relative (Base 100)")
-                # Normalisation base 100 pour comparer
-                normalized_data = (data / data.iloc[0]) * 100
-                st.line_chart(normalized_data)
+                # Nuage de points
+                fig.add_trace(go.Scatter(
+                    x=results[1,:], y=results[0,:], mode='markers',
+                    marker=dict(color=results[2,:], colorscale='Viridis', showscale=True, size=5),
+                    name='Portefeuilles simulés'
+                ))
                 
+                # Point optimal
+                fig.add_trace(go.Scatter(
+                    x=[sdp], y=[rp], mode='markers',
+                    marker=dict(color='red', size=15, symbol='star'),
+                    name='Max Sharpe Ratio'
+                ))
+                
+                fig.update_layout(
+                    title="Frontière Efficiente (Risk vs Return)",
+                    xaxis_title="Volatilité (Risque Annuel)",
+                    yaxis_title="Rendement Espéré (Annuel)",
+                    height=500
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                
+                st.info(f" **Portefeuille Optimal :** Rendement {rp:.1%} | Volatilité {sdp:.1%}")
+
             except Exception as e:
-                st.error(f"Erreur lors de la récupération des données. Vérifiez les tickers. ({e})")
+                st.error(f"Erreur data : {e}")
         else:
-            st.warning("Veuillez sélectionner au moins 2 actifs pour afficher la corrélation.")
+            st.warning("Sélectionnez au moins 2 actifs.")
 
-# --- TAB SALES ---
-with tab_sales:
-    st.markdown("## Cockpit Sales & Structuration")
-    st.markdown("""
-    Ici, je simule l'approche d'un Sales CIB : **Comprendre le besoin client - Structurer une solution - Pricer - Pitcher.**
-    """)
+
+
+# --- TAB 6 : MARKET DATA & CORRELATION --- (pas sur le site pour l'instant)
+if False:
     
-    # Division en 2 colonnes : Paramètres Client (Gauche) / Solution & Visuel (Droite)
-    col_input, col_output = st.columns([1, 2])
-    
-    with col_input:
-        st.markdown('<div class="highlight">1. Paramètres du Produit</div>', unsafe_allow_html=True)
+    with tab_market:
+        st.markdown("## Analyse de Marché (Données Réelles)")
+        st.markdown("""
+        En structuration, on travaille souvent sur des paniers d'actifs (Basket Options). 
+        Comprendre la corrélation entre les sous-jacents est crucial pour pricer le risque.
         
-        # Choix de base
-        underlying = st.selectbox("Sous-jacent", ["Euro Stoxx 50", "S&P 500", "LVMH", "TotalEnergies", "Nvidia"])
-        product_type = st.selectbox("Structure", ["Phoenix Mémoire (Yield)", "Autocall Athena (Early Redemp.)", "Capital Garanti (Call Spread)"])
+        *Les données ci-dessous sont récupérées en temps réel via l'API Yahoo Finance.*
+        """)
         
-        st.markdown("---")
-        st.markdown("**Paramètres de Structuration**")
+        col_sel, col_viz = st.columns([1, 3])
         
-        # Paramètres dynamiques selon le produit
-        maturity = st.slider("Maturité (Années)", 1, 10, 5)
-        
-        if "Phoenix" in product_type or "Autocall" in product_type:
-            barrier_protection = st.slider("Barrière de Protection (Capital)", 40, 80, 60, help="Niveau en % du prix initial en dessous duquel le capital est à risque")
-            barrier_coupon = st.slider("Barrière de Coupon", 50, 100, 70, help="Niveau pour toucher le coupon")
-            autocall_trigger = st.number_input("Niveau d'Autocall (%)", value=100)
-        else: # Capital Garanti
-            participation = st.slider("Participation à la hausse (%)", 50, 150, 100)
-            protection = 100 # Capital garanti
+        with col_sel:
+            st.markdown('<div class="highlight">Sélection du Panier</div>', unsafe_allow_html=True)
+            # Liste de tickers par défaut (CAC40 & Tech US)
+            default_tickers = ['AC.PA', 'MC.PA', 'TEP.PA', 'AAPL', 'MSFT', 'NVDA']
+            tickers = st.multiselect("Choix des Actions", default_tickers, default=default_tickers[:4])
+            period = st.selectbox("Période d'analyse", ["1mo", "3mo", "6mo", "1y", "5y"], index=3)
             
-        st.markdown("---")
-        market_env = st.selectbox("Environnement de Volatilité", ["Faible (<15%)", "Moyenne (15-25%)", "Élevée (>25%)"])
-
-    with col_output:
-        st.markdown('<div class="highlight">2. Structuration & Pitch</div>', unsafe_allow_html=True)
-        
-        # --- MOTEUR DE PRICING SIMULÉ (Logique Heuristique pour la démo) ---
-        # Note pour le recruteur : Ceci est une simulation de logique de pricing pour démontrer la mécanique
-        base_coupon = 5.0 # Taux sans risque approx + spread
-        
-        # Impact Volatilité
-        vol_impact = 0
-        if market_env == "Élevée (>25%)": vol_impact = 3.0
-        elif market_env == "Moyenne (15-25%)": vol_impact = 1.5
-        
-        # Impact Structure
-        struct_yield = 0
-        if "Phoenix" in product_type:
-            # Plus la barrière est haute (risque), plus le coupon est bas. Plus la barrière est basse (safe), plus le coupon est bas... wait no.
-            # En vente d'option (Phoenix) : Plus on prend de risque (Barrière haute), plus on a de rendement ? Non, c'est l'inverse en structuration.
-            # Plus la barrière est basse (ex: 50%), plus l'option de vente vaut cher ? Non.
-            # Simplification : Plus la protection est "loin" (40%), plus le coupon est FAIBLE (car moins risqué).
-            # Plus la protection est proche (80%), plus le coupon est ÉLEVÉ (car risqué).
-            risk_premium = (barrier_protection - 40) * 0.15 
-            struct_yield = base_coupon + vol_impact + risk_premium
-            display_metric = f"{struct_yield:.2f}% / an"
-            metric_label = "Coupon Indicatif"
-            
-        elif "Garanti" in product_type:
-            # Capital Garanti : On paie pour la garantie, donc rendement faible ou participation ajustée
-            struct_yield = (participation / 100) * (base_coupon + vol_impact) 
-            # C'est un peu faux mathématiquement mais logique commercialement pour la démo
-            display_metric = f"{participation}%"
-            metric_label = "Participation à la hausse"
-            
-        else: # Athena
-            struct_yield = base_coupon + vol_impact + 2.0 # Prime d'autocall
-            display_metric = f"{struct_yield:.2f}% / an"
-            metric_label = "Rendement si Rappel"
-
-        # --- VISUALISATION (Term Sheet & Graph) ---
-        c1, c2 = st.columns([1, 2])
-        
-        with c1:
-            st.metric(label=metric_label, value=display_metric, delta="Pricing Live")
-            st.info(f"**Protection :** Jusqu'à -{100-barrier_protection}%" if "Garanti" not in product_type else "**Capital Garanti 100%**")
-        
-        with c2:
-            # Graphique de Payoff à Maturité
-            fig_payoff, ax_p = plt.subplots(figsize=(6, 3))
-            spots = np.linspace(0, 150, 100)
-            payoffs = np.zeros_like(spots)
-            
-            if "Phoenix" in product_type:
-                # Si Spot > Barrière Capital : 100% + Coupon (simplifié)
-                # Si Spot < Barrière Capital : Perte en capital
-                barrier_val = barrier_protection
-                for i, s in enumerate(spots):
-                    if s >= barrier_val:
-                        payoffs[i] = 100 + struct_yield # On récupère 100 + le coupon
-                    else:
-                        payoffs[i] = s # On perd (remboursement à la valeur de l'action)
+        with col_viz:
+            if len(tickers) > 1:
+                try:
+                    # Téléchargement des données
+                    data = yf.download(tickers, period=period)['Close']
+                    
+                    # Calcul des rendements quotidiens (Log returns)
+                    returns = np.log(data / data.shift(1)).dropna()
                 
-                ax_p.plot(spots, payoffs, color='#4F8BF9', linewidth=2, label='Remboursement')
-                ax_p.axvline(barrier_val, color='red', linestyle='--', label=f'Barrière (-{100-barrier_val}%)')
-                ax_p.axhline(100, color='gray', linestyle=':', linewidth=0.5)
-                ax_p.fill_between(spots, 0, payoffs, alpha=0.1, color='#4F8BF9')
+                    # Calcul de la corrélation
+                    corr_matrix = returns.corr()
+                    
+                    # Affichage 1 : La Heatmap
+                    st.subheader("Matrice de Corrélation")
+                    fig_corr, ax_corr = plt.subplots(figsize=(8, 6))
+                    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, center=0, ax=ax_corr)
+                    st.pyplot(fig_corr)
+                    
+                    st.divider()
+                    
+                    # Affichage 2 : Performance comparée
+                    st.subheader("Performance Relative (Base 100)")
+                    # Normalisation base 100 pour comparer
+                    normalized_data = (data / data.iloc[0]) * 100
+                    st.line_chart(normalized_data)
+                    
+                except Exception as e:
+                    st.error(f"Erreur lors de la récupération des données. Vérifiez les tickers. ({e})")
+            else:
+                st.warning("Veuillez sélectionner au moins 2 actifs pour afficher la corrélation.")
 
-            elif "Garanti" in product_type:
-                # Call Spread : Max(100, 100 + Participation * (S-100))
-                payoffs = [100 + max(0, participation/100 * (s - 100)) for s in spots]
-                ax_p.plot(spots, payoffs, color='green', linewidth=2)
-                ax_p.axhline(100, color='green', linestyle='--', label='Capital Garanti')
-
-            ax_p.set_title("Scénario à Maturité (Payoff)", fontsize=10)
-            ax_p.set_xlabel("% du Prix Initial")
-            ax_p.set_ylabel("Remboursement (%)")
-            ax_p.legend(fontsize=8)
-            ax_p.grid(True, alpha=0.3)
-            st.pyplot(fig_payoff)
-
-        # --- GENERATEUR DE PITCH ---
-        st.markdown("### Email Client (Généré)")
-        pitch_text = f"""
-        Objet : Opportunité {product_type} sur {underlying} - Coupon {display_metric}
+# --- TAB MEMO : INVESTMENT THESIS ---
+with tab_sales: 
+    st.markdown("## Générateur de Thèse d'Investissement")
+    st.write("Simulation d'un mémo de recherche pour le Comité d'Investissement.")
+    
+    c1, c2 = st.columns([1, 2])
+    with c1:
+        ticker_memo = st.text_input("Ticker (ex: NVDA)", "NVDA")
+        reco = st.selectbox("Recommandation", ["BUY", "HOLD", "SELL"])
+        horizon = st.selectbox("Horizon", ["Court terme (Tactique)", "Long Terme (Stratégique)"])
+        catalyst = st.text_area("Catalyseur Principal", "Avance technologique sur l'IA et demande forte des Data Centers.")
+        risk = st.text_area("Risque Principal", "Valorisation tendue et concurrence accrue.")
         
-        Bonjour,
+    with c2:
+        st.markdown("### Investment Memo Draft")
+        memo_body = f"""
+        **TO:** Investment Committee
+        **ASSET:** {ticker_memo}
+        **ACTION:** {reco} ({horizon})
         
-        Dans le contexte actuel de volatilité {market_env.split('(')[0].lower()}, nous avons structuré une solution pour optimiser le rendement de votre poche actions.
+        **THÈSE D'INVESTISSEMENT :**
+        Notre conviction sur {ticker_memo} repose sur : {catalyst}
         
-        La Proposition : {underlying}
-        1. Rendement : {metric_label} cible de {display_metric}.
-        2. Protection : Le capital est protégé jusqu'à une baisse de {100-barrier_protection if "Garanti" not in product_type else 0}% à maturité.
-        3. Mécanisme : { "Coupons mémorisables versés si l'action tient la barrière de " + str(barrier_coupon) + "%." if "Phoenix" in product_type else "Participation à la hausse avec 0 risque en capital."}
+        **RISQUES :**
+        Nous surveillons attentivement : {risk}
         
-        C'est le moment idéal pour pricer cette structure car la volatilité nous permet d'aller chercher ce niveau de coupon attractif.
-        Je suis disponible pour en discuter de vive voix et ajuster les paramètres selon vos contraintes.
+        **CONCLUSION :**
+        Compte tenu du couple rendement/risque actuel, nous recommandons de passer à l'{reco}.
         
-        Bien à vous,
-        Romain Chalard
+        Romain Chalard - Analyste Junior
         """
-        st.text_area("Draft prêt à envoyer :", value=pitch_text.replace("        ", ""), height=250)
+        st.info(memo_body)
+        
+# --- TAB SALES --- (pas sur le site)
+if False:
+    with tab_sales:
+        st.markdown("## Cockpit Sales & Structuration")
+        st.markdown("""
+        Ici, je simule l'approche d'un Sales CIB : **Comprendre le besoin client - Structurer une solution - Pricer - Pitcher.**
+        """)
+        
+        # Division en 2 colonnes : Paramètres Client (Gauche) / Solution & Visuel (Droite)
+        col_input, col_output = st.columns([1, 2])
+        
+        with col_input:
+            st.markdown('<div class="highlight">1. Paramètres du Produit</div>', unsafe_allow_html=True)
+            
+            # Choix de base
+            underlying = st.selectbox("Sous-jacent", ["Euro Stoxx 50", "S&P 500", "LVMH", "TotalEnergies", "Nvidia"])
+            product_type = st.selectbox("Structure", ["Phoenix Mémoire (Yield)", "Autocall Athena (Early Redemp.)", "Capital Garanti (Call Spread)"])
+            
+            st.markdown("---")
+            st.markdown("**Paramètres de Structuration**")
+            
+            # Paramètres dynamiques selon le produit
+            maturity = st.slider("Maturité (Années)", 1, 10, 5)
+            
+            if "Phoenix" in product_type or "Autocall" in product_type:
+                barrier_protection = st.slider("Barrière de Protection (Capital)", 40, 80, 60, help="Niveau en % du prix initial en dessous duquel le capital est à risque")
+                barrier_coupon = st.slider("Barrière de Coupon", 50, 100, 70, help="Niveau pour toucher le coupon")
+                autocall_trigger = st.number_input("Niveau d'Autocall (%)", value=100)
+            else: # Capital Garanti
+                participation = st.slider("Participation à la hausse (%)", 50, 150, 100)
+                protection = 100 # Capital garanti
+                
+            st.markdown("---")
+            market_env = st.selectbox("Environnement de Volatilité", ["Faible (<15%)", "Moyenne (15-25%)", "Élevée (>25%)"])
+    
+        with col_output:
+            st.markdown('<div class="highlight">2. Structuration & Pitch</div>', unsafe_allow_html=True)
+            
+            # --- MOTEUR DE PRICING SIMULÉ (Logique Heuristique pour la démo) ---
+            # Note pour le recruteur : Ceci est une simulation de logique de pricing pour démontrer la mécanique
+            base_coupon = 5.0 # Taux sans risque approx + spread
+            
+            # Impact Volatilité
+            vol_impact = 0
+            if market_env == "Élevée (>25%)": vol_impact = 3.0
+            elif market_env == "Moyenne (15-25%)": vol_impact = 1.5
+            
+            # Impact Structure
+            struct_yield = 0
+            if "Phoenix" in product_type:
+                # Plus la barrière est haute (risque), plus le coupon est bas. Plus la barrière est basse (safe), plus le coupon est bas... wait no.
+                # En vente d'option (Phoenix) : Plus on prend de risque (Barrière haute), plus on a de rendement ? Non, c'est l'inverse en structuration.
+                # Plus la barrière est basse (ex: 50%), plus l'option de vente vaut cher ? Non.
+                # Simplification : Plus la protection est "loin" (40%), plus le coupon est FAIBLE (car moins risqué).
+                # Plus la protection est proche (80%), plus le coupon est ÉLEVÉ (car risqué).
+                risk_premium = (barrier_protection - 40) * 0.15 
+                struct_yield = base_coupon + vol_impact + risk_premium
+                display_metric = f"{struct_yield:.2f}% / an"
+                metric_label = "Coupon Indicatif"
+                
+            elif "Garanti" in product_type:
+                # Capital Garanti : On paie pour la garantie, donc rendement faible ou participation ajustée
+                struct_yield = (participation / 100) * (base_coupon + vol_impact) 
+                # C'est un peu faux mathématiquement mais logique commercialement pour la démo
+                display_metric = f"{participation}%"
+                metric_label = "Participation à la hausse"
+                
+            else: # Athena
+                struct_yield = base_coupon + vol_impact + 2.0 # Prime d'autocall
+                display_metric = f"{struct_yield:.2f}% / an"
+                metric_label = "Rendement si Rappel"
+
+            # --- VISUALISATION (Term Sheet & Graph) ---
+            c1, c2 = st.columns([1, 2])
+            
+            with c1:
+                st.metric(label=metric_label, value=display_metric, delta="Pricing Live")
+                st.info(f"**Protection :** Jusqu'à -{100-barrier_protection}%" if "Garanti" not in product_type else "**Capital Garanti 100%**")
+            
+            with c2:
+                # Graphique de Payoff à Maturité
+                fig_payoff, ax_p = plt.subplots(figsize=(6, 3))
+                spots = np.linspace(0, 150, 100)
+                payoffs = np.zeros_like(spots)
+                
+                if "Phoenix" in product_type:
+                    # Si Spot > Barrière Capital : 100% + Coupon (simplifié)
+                    # Si Spot < Barrière Capital : Perte en capital
+                    barrier_val = barrier_protection
+                    for i, s in enumerate(spots):
+                        if s >= barrier_val:
+                            payoffs[i] = 100 + struct_yield # On récupère 100 + le coupon
+                        else:
+                            payoffs[i] = s # On perd (remboursement à la valeur de l'action)
+                    
+                    ax_p.plot(spots, payoffs, color='#4F8BF9', linewidth=2, label='Remboursement')
+                    ax_p.axvline(barrier_val, color='red', linestyle='--', label=f'Barrière (-{100-barrier_val}%)')
+                    ax_p.axhline(100, color='gray', linestyle=':', linewidth=0.5)
+                    ax_p.fill_between(spots, 0, payoffs, alpha=0.1, color='#4F8BF9')
+    
+                elif "Garanti" in product_type:
+                    # Call Spread : Max(100, 100 + Participation * (S-100))
+                    payoffs = [100 + max(0, participation/100 * (s - 100)) for s in spots]
+                    ax_p.plot(spots, payoffs, color='green', linewidth=2)
+                    ax_p.axhline(100, color='green', linestyle='--', label='Capital Garanti')
+    
+                ax_p.set_title("Scénario à Maturité (Payoff)", fontsize=10)
+                ax_p.set_xlabel("% du Prix Initial")
+                ax_p.set_ylabel("Remboursement (%)")
+                ax_p.legend(fontsize=8)
+                ax_p.grid(True, alpha=0.3)
+                st.pyplot(fig_payoff)
+    
+            # --- GENERATEUR DE PITCH ---
+            st.markdown("### Email Client (Généré)")
+            pitch_text = f"""
+            Objet : Opportunité {product_type} sur {underlying} - Coupon {display_metric}
+            
+            Bonjour,
+            
+            Dans le contexte actuel de volatilité {market_env.split('(')[0].lower()}, nous avons structuré une solution pour optimiser le rendement de votre poche actions.
+            
+            La Proposition : {underlying}
+            1. Rendement : {metric_label} cible de {display_metric}.
+            2. Protection : Le capital est protégé jusqu'à une baisse de {100-barrier_protection if "Garanti" not in product_type else 0}% à maturité.
+            3. Mécanisme : { "Coupons mémorisables versés si l'action tient la barrière de " + str(barrier_coupon) + "%." if "Phoenix" in product_type else "Participation à la hausse avec 0 risque en capital."}
+            
+            C'est le moment idéal pour pricer cette structure car la volatilité nous permet d'aller chercher ce niveau de coupon attractif.
+            Je suis disponible pour en discuter de vive voix et ajuster les paramètres selon vos contraintes.
+            
+            Bien à vous,
+            Romain Chalard
+            """
+            st.text_area("Draft prêt à envoyer :", value=pitch_text.replace("        ", ""), height=250)
 
 # --- TAB : EXTRA & PERSO ---
 with tab_extra:
