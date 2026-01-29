@@ -354,7 +354,15 @@ with tab_market:
                     title="Frontière Efficiente (Risk vs Return)",
                     xaxis_title="Volatilité (Risque Annuel)",
                     yaxis_title="Rendement Espéré (Annuel)",
-                    height=500
+                    height=500,
+                    legend=dict(
+                        orientation="h",
+                        yanchor="bottom",
+                        y=1.02,
+                        xanchor="right",
+                        x=1
+                    ),
+                    margin=dict(r=20)
                 )
                 st.plotly_chart(fig, use_container_width=True)
                 
