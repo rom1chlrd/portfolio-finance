@@ -442,8 +442,7 @@ with tab_sales:
         
     with c2:
         st.markdown("### Aperçu du Mémo")
-        
-        # On utilise st.markdown avec du HTML pour un rendu "Document Officiel" parfait
+
         st.markdown(f"""
         <div style="
             background-color: white; 
