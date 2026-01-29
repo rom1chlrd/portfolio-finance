@@ -440,7 +440,7 @@ with tab_sales:
         catalyst = st.text_area("Catalyseur Principal", "Avance technologique sur l'IA et demande forte des Data Centers.")
         risk = st.text_area("Risque Principal", "Valorisation tendue et concurrence accrue.")
         
-  with c2:
+    with c2:
         st.markdown("### 📝 Aperçu du Mémo")
         
         # VERSION CORRIGÉE : HTML COLLÉ À GAUCHE POUR ÉVITER LE BUG D'AFFICHAGE
