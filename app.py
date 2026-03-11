@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 # --- CONFIGURATION GÉNÉRALE ---
 st.set_page_config(
-    page_title="Romain Chalard - Portfolio Structuration",
+    page_title="Romain Chalard - Étudiant Ingénieur",
     page_icon="📈",
     layout="wide"
 )
@@ -32,7 +32,7 @@ st.markdown("""
 # --- DONNÉES DU CV (Hardcodées pour la simplicité) ---
 CONTACT_INFO = {
     "name": "Romain Chalard",
-    "tagline": "Étudiant en Ingénierie Financière | Recherche Stage 6 mois - Asset Management",
+    "tagline": "Étudiant Ingénieur option Finance",
     "phone": "+33 7 81 78 79 71",
     "email": "romain.chalard@student.junia.com",
     "location": "Paris, France",
@@ -101,7 +101,7 @@ st.markdown(f'<div class="main-header">Portfolio Technique & Financier | Romain 
 st.markdown(f"**{CONTACT_INFO['tagline']}**")
 
 # Onglets de navigation
-tab_about, tab_market, tab_tech, tab_mc, tab_sales, tab_skills, tab_extra = st.tabs(["👤 À Propos", "📊 Market Data", "💻 Pricer Options", "🎲 Monte Carlo", "📑 Invest. Memo", "💼 Compétences", "🌍 Extra & Perso"])
+tab_about, tab_tech, tab_market, tab_mc, tab_sales, tab_skills, tab_extra = st.tabs(["👤 À Propos", "💻 Pricer Options", "📊 Market Data", "🎲 Monte Carlo", "📑 Invest. Memo", "💼 Compétences", "🌍 Extra & Perso"])
 
 # --- TAB 1 : À PROPOS & AMBITIONS ---
 with tab_about:
@@ -112,10 +112,18 @@ with tab_about:
         st.info("""
         **Recherche de stage (6 mois) à partir de Juin 2026**
         
-        Actuellement en cycle ingénieur à **HEI** et en spécialisation Finance à l'**University of Florida**, 
-        je souhaite appliquer mes compétences en Data Analysis et Modélisation à la **gestion d'actifs**.
+        Je suis étudiant ingénieur avec une formation en mathématiques appliquées et un intérêt pour la finance de marché et la modélisation quantitative.
+        Ce portfolio présente plusieurs projets explorant l’application de méthodes numériques et de modèles mathématiques aux marchés financiers, notamment à travers des simulations et de l’analyse de données en Python.
+        L’objectif de ces projets est d’illustrer la mise en œuvre de concepts courants en finance quantitative, tels que la simulation de prix d’actifs, l’analyse de données financières et l’implémentation de modèles simples de valorisation.
 
-        Mon approche : Utiliser la donnée (Python/Quant) pour optimiser la prise de décision d'investissement (Fondamentale).
+        Outils utilisés :
+
+        - Python
+        - NumPy / Pandas
+        - Matplotlib
+        - Streamlit
+        - Simulation Monte Carlo
+        - Analyse de données financières
         """)
         
         st.markdown("### Intérêt Personnel pour les Marchés")
@@ -131,9 +139,9 @@ with tab_about:
         st.markdown("""
         **2026 (Jan-Mai)** 🇺🇸 **University of Florida** *Finance de Marché & Supply Chain*
         
-        **2024 - Présent** 🇫🇷 **Junia HEI, Lille** *Ingénierie Financière* *(Maths, VBA, Analyse Financière)*
+        **2024 - Présent** 🇫🇷 **Junia HEI, Lille** *École d'ingénieur option Finance* *(Maths, VBA, Python)*
 
-        **2022 - 2024** 🇫🇷 **Prépa Lycée LaSalle, Lille** *Maths, Physique*
+        **2022 - 2024** 🇫🇷 **Prépa Lycée LaSalle, Lille** *MPSI/MP*
         
         **2019 - 2022** 🇺🇸 **Academica High School** *Dual Diploma (US High School Diploma)*
         """)
