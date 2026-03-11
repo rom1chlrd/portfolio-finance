@@ -137,11 +137,11 @@ with tab_about:
     with col2:
         st.markdown("### Formation Clé")
         st.markdown("""
-        **2026 (Jan-Mai)** 🇺🇸 **University of Florida** *Finance de Marché & Supply Chain*
+        **2026 (Jan-Mai)** 🇺🇸 **University of Florida**/t *Finance de Marché & Supply Chain*
         
-        **2024 - Présent** 🇫🇷 **Junia HEI, Lille** *École d'ingénieur option Finance* *(Maths, VBA, Python)*
+        **2024 - Présent** 🇫🇷 **Junia HEI, Lille**/t *École d'ingénieur option Finance* *(Maths, VBA, Python)*
 
-        **2022 - 2024** 🇫🇷 **Prépa Lycée LaSalle, Lille** *MPSI/MP*
+        **2022 - 2024** 🇫🇷 **Prépa Lycée LaSalle, Lille**/t *MPSI/MP*
         
         **2019 - 2022** 🇺🇸 **Academica High School** *Dual Diploma (US High School Diploma)*
         """)
