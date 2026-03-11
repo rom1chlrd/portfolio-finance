@@ -103,12 +103,12 @@ st.markdown(f"**{CONTACT_INFO['tagline']}**")
 # Onglets de navigation
 tab_about, tab_tech, tab_market, tab_mc, tab_sales, tab_skills, tab_extra = st.tabs(["👤 À Propos", "💻 Pricer Options", "📊 Market Data", "🎲 Monte Carlo", "📑 Invest. Memo", "💼 Compétences", "🌍 Extra & Perso"])
 
-# --- TAB 1 : À PROPOS & AMBITIONS ---
+# --- TAB 1 : À PROPOS ---
 with tab_about:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.markdown("### Mon Objectif : Investment Management")
+        st.markdown("### Mon Objectif : Structuration/Maths appliquées")
         st.info("""
         **Recherche de stage (6 mois) à partir de Juin 2026**
         
