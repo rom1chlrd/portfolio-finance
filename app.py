@@ -112,8 +112,8 @@ with tab_about:
         st.info("""
         **Recherche de stage (6 mois) à partir de Juin 2026**
         
-        Je suis étudiant ingénieur avec une formation en mathématiques appliquées et un intérêt pour la finance de marché et la modélisation quantitative.
-        Ce portfolio présente plusieurs projets explorant l’application de méthodes numériques et de modèles mathématiques aux marchés financiers, notamment à travers des simulations et de l’analyse de données en Python.
+        Je suis étudiant ingénieur avec une formation en mathématiques appliquées et un intérêt pour la finance de marché et la modélisation quantitative.\n
+        Ce portfolio présente plusieurs projets explorant l’application de méthodes numériques et de modèles mathématiques aux marchés financiers, notamment à travers des simulations et de l’analyse de données en Python.\n
         L’objectif de ces projets est d’illustrer la mise en œuvre de concepts courants en finance quantitative, tels que la simulation de prix d’actifs, l’analyse de données financières et l’implémentation de modèles simples de valorisation.
 
         Outils utilisés :
