@@ -135,9 +135,9 @@ with tab_about:
         """)
 
     with col2:
-        st.markdown("### Formation Clé")
+        st.markdown("### Formation")
         st.markdown("""
-        **2026 (Jan-Mai)** 🇺🇸 **University of Florida**        *Finance de Marché & Supply Chain*
+        **2026 (Jan-Mai)** 🇺🇸 **University of Florida**        *Equity and Capital Markets*
         
         **2024 - Présent** 🇫🇷 **Junia HEI, Lille**        *École d'ingénieur option Finance* *(Maths, VBA, Python)*
 
